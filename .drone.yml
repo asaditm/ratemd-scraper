@@ -1,0 +1,24 @@
+cache:
+  mount:
+    - node_modules
+build:
+  image: node:wheezy
+  commands:
+    - npm install --unsafe-perm
+    - npm run build
+
+deploy:
+  ssh:
+    host: hoogit.ca
+    user: drone
+    commands:
+      - docker-restart hoogit-staging
+    when:
+      branch: develop
+  ssh:
+    host: hoogit.ca
+    user: drone
+    commands:
+      - docker-restart hoogit
+    when:
+      branch: master

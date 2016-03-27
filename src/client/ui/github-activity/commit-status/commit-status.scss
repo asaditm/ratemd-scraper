@@ -1,0 +1,37 @@
+@import '../../../main/_vars';
+
+.commit-status {
+  color: $accent;
+  display: inline-block;
+  position: relative;
+  text-align: center;
+
+  &:hover {
+    @include popover();
+  }
+
+  .commit-status-icon {
+    font-weight: 400;
+    cursor: pointer;
+    &.success {
+      color: $accent;
+    }
+    &.pending {
+      color: $accent;
+    }
+    &.error {
+      color: material-color('red', '500');
+    }
+  }
+}
+
+
+@keyframes fade-in {
+  from   { opacity: 0; }
+  top { opacity: 1; }
+}
+
+@keyframes move-up {
+  from   { bottom: 30px; }
+  to { bottom: 42px; }
+}

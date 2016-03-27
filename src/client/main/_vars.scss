@@ -1,0 +1,30 @@
+@import '../../../node_modules/sass-material-colors/sass/sass-material-colors';
+
+// Base colors
+$primary: material-color('light-blue', '500');
+$primaryDark: material-color('light-blue', '800');
+$accent: material-color('orange', 'a400');
+$accentDark: material-color('orange', 'a700');
+$light: material-color('grey', '100');
+$dark: material-color('grey', '900');
+
+// Background colors
+$bg: $primary;
+$bg-alt: $accent;
+$bg-light: material-color('grey', '50');
+$white: #fff;
+$black: #000;
+
+$borderGrey: #eeeeee;
+
+// Font colors
+$fontBgColor: $light;
+$fontBgBlack: #828282;
+
+
+@mixin popover() {
+  .ph-popover {
+    display: block;
+    animation: fade-in .3s linear 1, move-up .3s linear 1;
+  }
+}
