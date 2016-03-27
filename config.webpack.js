@@ -39,7 +39,7 @@ const commonPlugins = [
 
   new CommonsChunkPlugin({
     name: 'vendor',
-    filename: 'dist/vendor-[hash:6].js',
+    filename: 'vendor-[hash:6].js',
     minChunks: Infinity
   }),
 ];
