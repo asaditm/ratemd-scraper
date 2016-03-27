@@ -6,12 +6,15 @@ import './main.scss';
 
 /* eslint indent: 0 */
 const template = [
-  '<div class="wrapper">',
+  '<div>',
+    'Hello {{$ctrl.name || World}}',
   '</div>'
 ].join('');
 
 const mainComponent = {
-  bindings: {},
+  bindings: {
+    name: '@'
+  },
   template
 };
 

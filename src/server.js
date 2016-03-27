@@ -6,7 +6,7 @@
  * Ensure that they have been compiled by running `npm build`
  */
 
-import * as path from 'path';
+import { join } from 'path';
 import * as http from 'http';
 import * as fs from 'fs';
 
@@ -33,10 +33,9 @@ const environment = {
 }[process.env.NODE_ENV || 'development'];
 
 const config = Object.assign({
-  title: 'Power Hour',
   port: process.env.PORT,
   dir: {
-    static: path.join(__dirname, '..', 'static')
+    static: join(__dirname, '..', 'static')
   }
 }, environment);
 
@@ -45,10 +44,10 @@ const config = Object.assign({
  */
 app.use(compression());
 app.use(Express.static(config.dir.static));
-app.use(favicon(path.join(config.dir.static, 'favicon.ico')));
+app.use(favicon(join(config.dir.static, 'favicon.ico')));
 
 if (config.isProduction) {
-  app.use(morgan('combined', {
+  app.use(morgan('short', {
     skip: (req, res) => res.statusCode < 400
   }));
 } else {
@@ -60,16 +59,12 @@ if (config.isProduction) {
  */
 
 // All unregistered routes should send index
-app.route('/*')
+app.route('/')
   .get((req, res) => {
     res.setHeader('Content-Type', 'text/html');
-    fs.createReadStream(path.join(config.dir.static, 'dist', 'index.html'))
+    fs.createReadStream(join(config.dir.static, 'dist', 'index.html'))
       .pipe(res);
   });
-
-// Any missing assets will return a 404 instead of index
-app.route('/:url(images:dist|assets|js|fonts|templates)/*')
-  .get((req, res) => res.sendStatus(404));
 
 /**
  * Start the server

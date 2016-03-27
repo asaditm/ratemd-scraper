@@ -12,7 +12,7 @@ import 'normalize.css/normalize';
 import ngAnimate from 'angular-animate';
 import ngUiRouter from 'angular-ui-router';
 
-import coreRoutes from './core.routes';
+import config from './core.config';
 
 const dependencies = [
  /* Angular modules */
@@ -27,6 +27,6 @@ const dependencies = [
 const core =
   angular
     .module('app.core', dependencies)
-    .config(coreRoutes);
+    .config(config);
 
 export default core.name;

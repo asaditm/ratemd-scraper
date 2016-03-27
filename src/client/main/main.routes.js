@@ -10,10 +10,7 @@ function getStates() {
       config: {
         name: 'main',
         url: '/',
-        template: '<main></main>',
-        data: {
-          misc: 'Hello world'
-        }
+        template: '<main name="George"></main>'
       }
     }
   ];
