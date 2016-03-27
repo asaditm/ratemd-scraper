@@ -9,16 +9,16 @@ build:
 
 deploy:
   ssh:
-    host: hoogit.ca
+    host: myDomain.ca
     user: drone
     commands:
-      - docker-restart hoogit-staging
+      - docker-restart awesomeApp-staging
     when:
       branch: develop
   ssh:
-    host: hoogit.ca
+    host: myDomain.ca
     user: drone
     commands:
-      - docker-restart hoogit
+      - docker-restart awesomeApp
     when:
       branch: master

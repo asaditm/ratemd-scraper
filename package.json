@@ -1,18 +1,18 @@
 {
-  "name": "hoogit",
+  "name": "angular-es6-starter",
   "version": "0.0.1",
-  "description": "Landing page for HoogIT domain",
+  "description": "Simple starter kit for angular and es6",
   "main": "./bin/server.js",
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/jordond/hoogit.git"
+    "url": "git+ssh://git@github.com/jordond/angular-es6-starter.git"
   },
   "author": "Jordon de Hoog",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/jordond/hoogit/issues"
+    "url": "https://github.com/jordond/angular-es6-starter/issues"
   },
-  "homepage": "https://github.com/jordond/hoogit#readme",
+  "homepage": "https://github.com/jordond/angular-es6-starter#readme",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 0",
     "lint": "eslint -c .eslintrc src",
@@ -48,19 +48,19 @@
       }
     },
     "build:prod": {
-      "command": "webpack --verbose --colors --display-error-details --config prod.webpack.js",
+      "command": "webpack --verbose --colors --display-error-details --config config.webpack.js",
       "env": {
         "NODE_ENV": "production"
       }
     },
     "build:prod:watch": {
-      "command": "webpack --watch --debug --verbose --colors --display-error-details --config prod.webpack.js",
+      "command": "webpack --watch --debug --verbose --colors --display-error-details --config config.webpack.js",
       "env": {
         "NODE_ENV": "production"
       }
     },
     "build:dev": {
-      "command": "webpack --watch --debug --colors --display-error-details --config dev.webpack.js",
+      "command": "webpack --watch --debug --colors --display-error-details --config config.webpack.js",
       "env": {
         "NODE_ENV": "development",
         "PORT": 9000
@@ -104,7 +104,6 @@
     "font-awesome": "^4.5.0",
     "html-loader": "^0.4.3",
     "html-webpack-plugin": "^2.9.0",
-    "moment": "^2.12.0",
     "ng-annotate": "^1.2.1",
     "ng-annotate-loader": "^0.1.0",
     "ngtemplate-loader": "^1.3.1",
