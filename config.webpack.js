@@ -39,7 +39,7 @@ const commonPlugins = [
 
   new CommonsChunkPlugin({
     name: 'vendor',
-    filename: 'vendor-[hash:6].js',
+    filename: isProduction ? 'vendor-[hash:6].js' : 'vendor.js',
     minChunks: Infinity
   }),
 ];
@@ -53,8 +53,8 @@ module.exports = {
   },
   output: {
     path: assetPath,
-    filename: '[name]-[hash:6].js',
-    chunkFilename: '[name]-[chunkhash:6].js',
+    filename: isProduction ? '[name]-[hash:6].js' : '[name].js',
+    chunkFilename: isProduction ? '[name]-[chunkhash:6].js' : '[name].js',
     publicPath: 'dist/'
   },
   module: {
