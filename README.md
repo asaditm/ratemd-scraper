@@ -9,7 +9,7 @@ My current workflow is to turn this project into a Docker container, then revers
 Sites built with this starter kit:
 
 - [Power Hour](http://powerhourapp.ca)
-- [HoogIT](http://staging.hoogit.ca)
+- [HoogIT](http://hoogit.ca)
 
 ## Install
 
