@@ -1,6 +1,7 @@
 const path = require('path');
 const webpack = require('webpack');
 
+const nodeExternals = require('webpack-node-externals');
 const CommonsChunkPlugin = require('webpack/lib/optimize/CommonsChunkPlugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanPlugin = require('clean-webpack-plugin');
@@ -13,24 +14,9 @@ const entryJS = path.resolve('./src/client/index.js');
 
 const isProduction = process.env.NODE_ENV === 'production';
 
-const productionPlugins = [
-  new CleanPlugin([path.join(assetPath, 'dist')], { root: projectRoot, verbose: true }),
-  new webpack.optimize.DedupePlugin(),
-  new webpack.optimize.OccurenceOrderPlugin(),
-  new webpack.optimize.UglifyJsPlugin({
-    compress: {
-      warnings: false
-    }
-  })
-];
-
-const developmentPlugins = [
-  new BrowserSyncPlugin({
-    proxy: 'http://localhost:' + process.env.PORT,
-    open: false
-  })
-];
-
+/**
+ * Shared plugins used by both production and development mode
+ */
 const commonPlugins = [
   new HtmlWebpackPlugin({
     template: htmlIndex,
@@ -44,8 +30,10 @@ const commonPlugins = [
   }),
 ];
 
-module.exports = {
-  devtool: isProduction ? 'source-map' : 'inline-source-map',
+/**
+ * Share configuration between all environments
+ */
+const sharedConfig = {
   context: __dirname,
   entry: {
     vendor: ['angular', 'angular-ui-router'],
@@ -53,8 +41,6 @@ module.exports = {
   },
   output: {
     path: assetPath,
-    filename: isProduction ? '[name]-[hash:6].js' : '[name].js',
-    chunkFilename: isProduction ? '[name]-[chunkhash:6].js' : '[name].js',
     publicPath: 'dist/'
   },
   module: {
@@ -92,7 +78,6 @@ module.exports = {
     }]
   },
   progress: true,
-  plugins: isProduction ? commonPlugins.concat(productionPlugins) : commonPlugins.concat(developmentPlugins),
   resolve: {
     modulesDirectories: [
       'node_modules'
@@ -100,3 +85,72 @@ module.exports = {
     extensions: ['', '.js', '.json', '.css', '.scss']
   }
 };
+
+/**
+ * Config for development
+ */
+const devConfig = {
+  devtool: 'inline-source-map',
+  output: Object.assign(sharedConfig.output, {
+    filename: '[name].js',
+    chunkFilename: '[name].js'
+  }),
+  plugins: [
+    ...commonPlugins,
+    new BrowserSyncPlugin({
+      proxy: 'http://localhost:' + process.env.PORT,
+      open: false
+    })
+  ]
+}
+
+/**
+ * Config for production
+ */
+const prodConfig = {
+  devtool: 'source-map',
+  output: Object.assign(sharedConfig.output, {
+    filename: '[name]-[hash:6].js',
+    chunkFilename: '[name]-[chunkhash:6].js'
+  }),
+  plugins: [
+    ...commonPlugins,
+    new CleanPlugin([assetPath], { root: projectRoot, verbose: true }),
+    new webpack.optimize.DedupePlugin(),
+    new webpack.optimize.OccurenceOrderPlugin(),
+    new webpack.optimize.UglifyJsPlugin({
+      compress: {
+        warnings: false
+      }
+    })
+  ]
+}
+
+/**
+ * Config for running tests with mocha-webpack
+ */
+const testsConfig = {
+  output: {
+    devtoolModuleFilenameTemplate: '[absolute-resource-path]',
+    devtoolFallbackModuleFilenameTemplate: '[absolute-resource-path]?[hash]'
+  },
+  entry: {},
+  target: 'node',
+  externals: [nodeExternals()],
+  devtool: 'cheap-module-source-map'
+};
+
+/**
+ * Get the right configuration object based on the environment
+ */
+const config = {
+  production: prodConfig,
+  development: devConfig,
+  test: testsConfig
+}[process.env.NODE_ENV || 'development'];
+console.log('Running in %s mode', process.env.NODE_ENV);
+
+/**
+ * Combine with shared config then export
+ */
+module.exports = Object.assign(sharedConfig, config);
