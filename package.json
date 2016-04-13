@@ -34,7 +34,7 @@
   ],
   "betterScripts": {
     "test": {
-      "command": "mocha-webpack --colors --require source-map-support/register --webpack-config config.webpack.js \"src/client/**/*.test.js\"",
+      "command": "mocha-webpack --colors --require source-map-support/register --require src/client/testHelper.js --webpack-config config.webpack.js \"src/client/**/*.test.js\"",
       "env": {
         "NODE_ENV": "test"
       }
@@ -87,6 +87,7 @@
     "angular-aria": "^1.5.0",
     "angular-material": "^1.0.6",
     "angular-messages": "^1.5.0",
+    "angular-mocks": "^1.5.3",
     "angular-moment": "^0.10.3",
     "angular-ui-router": "^0.2.18",
     "autoprefixer-loader": "^3.2.0",
@@ -113,6 +114,8 @@
     "font-awesome": "^4.5.0",
     "html-loader": "^0.4.3",
     "html-webpack-plugin": "^2.9.0",
+    "ignore-loader": "^0.1.1",
+    "jsdom": "^8.3.1",
     "mocha": "^2.4.5",
     "mocha-webpack": "^0.3.0",
     "ng-annotate": "^1.2.1",

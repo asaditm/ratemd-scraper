@@ -1,7 +1,6 @@
 import { assert } from 'chai';
-// import app from './index';
 
-describe('Index', () => {
+describe('Main Module', () => {
   it('should be true', () => {
     assert.equal(true, true);
   });

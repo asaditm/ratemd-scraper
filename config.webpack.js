@@ -47,35 +47,16 @@ const sharedConfig = {
     preLoaders: [
       { test: /\.js$/, loader: 'eslint-loader', exclude: /node_modules/ }
     ],
-    loaders: [{
-      test: /\.tpl.html$/,
-      loader: 'ngtemplate?relativeTo=' + (path.resolve(__dirname, './src/client')) + '/!html-loader'
-    }, {
-      test: /\.css$/,
-      loader: 'style!css'
-    }, {
-      test: /\.scss$/,
-      loader: 'style-loader!css-loader!autoprefixer-loader!sass-loader'
-    }, {
-      test: /\.js$/,
-      exclude: /(node_modules)/,
-      loader: 'ng-annotate!babel'
-    }, {
-      test: [/fontawesome-webfont\.svg/, /fontawesome-webfont\.eot/, /fontawesome-webfont\.ttf/, /fontawesome-webfont\.woff/, /fontawesome-webfont\.woff2/],
-      loader: 'file?name=fonts/[name].[ext]'
-    }, {
-      test: /\.(woff|woff2|eot|ttf|svg)$/,
-      loader: 'url-loader?name=fonts/[name].[ext]&limit=100000'
-    }, {
-      test: /\.png$/,
-      loader: 'url-loader?name=images/[hash:6]-[name].png&limit=100000&mimetype=image/png'
-    }, {
-      test: /\.jpg$/,
-      loader: 'file-loader?name=images/[name].[ext]'
-    }, {
-      test: /\.json$/,
-      loader: 'file?name=json/[name].[ext]'
-    }]
+    loaders: [
+      { test: /\.tpl.html$/, loader: 'ngtemplate?relativeTo=' + (path.resolve(__dirname, './src/client')) + '/!html-loader' },
+      { test: /\.css$/, loader: 'style!css' },
+      { test: /\.scss$/, loader: 'style-loader!css-loader!autoprefixer-loader!sass-loader' },
+      { test: /\.js$/, exclude: /(node_modules)/, loader: 'ng-annotate!babel' },
+      { test: /\.(jpe|jpg|woff|woff2|eot|ttf|svg)(\?.*$|$)/, loader: 'file?name=fonts/[name].[ext]' },
+      { test: /\.png$/, loader: 'url-loader?name=images/[hash:6]-[name].png&limit=100000&mimetype=image/png' },
+      { test: /\.jpg$/, loader: 'file-loader?name=images/[name].[ext]' },
+      { test: /\.json$/, loader: 'file?name=json/[name].[ext]' }
+    ]
   },
   progress: true,
   resolve: {
@@ -137,7 +118,13 @@ const testsConfig = {
   entry: {},
   target: 'node',
   externals: [nodeExternals()],
-  devtool: 'cheap-module-source-map'
+  devtool: 'cheap-module-source-map',
+  module: {
+    loaders: [
+      { test: /\.(jpe|jpg|woff|woff2|eot|ttf|svg|png|scss|css|html)(\?.*$|$)/, loader: 'ignore-loader' },
+      { test: /\.js$/, exclude: /(node_modules)/, loader: 'ng-annotate!babel' }
+    ]
+  }
 };
 
 /**
