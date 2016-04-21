@@ -15,6 +15,10 @@ require('angular/angular');
 
 global.angular = window.angular;
 
+/**
+ * This needs to be called when ngMock is required.
+ * Can be called in the initial test file, or in each test file only when using ngMock.
+ */
 function setupMock() {
   window.mocha = true;
   window.beforeEach = beforeEach;
