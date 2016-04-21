@@ -5,20 +5,22 @@ build:
   image: node:wheezy
   commands:
     - npm install --unsafe-perm
+    - npm test
     - npm run build
 
-deploy:
-  ssh:
-    host: myDomain.ca
-    user: drone
-    commands:
-      - docker-restart awesomeApp-staging
-    when:
-      branch: develop
-  ssh:
-    host: myDomain.ca
-    user: drone
-    commands:
-      - docker-restart awesomeApp
-    when:
-      branch: master
+# Example deploy, check readme and github.com/jordond/docker-basesite for more info
+# deploy:
+#   ssh:
+#     host: myDomain.ca
+#     user: drone
+#     commands:
+#       - docker-restart awesomeApp-staging
+#     when:
+#       branch: develop
+#   ssh:
+#     host: myDomain.ca
+#     user: drone
+#     commands:
+#       - docker-restart awesomeApp
+#     when:
+#       branch: master
