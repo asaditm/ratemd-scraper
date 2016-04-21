@@ -24,9 +24,9 @@ const dependencies = [
   ngUiRouter
 ];
 
-const core =
+export const module =
   angular
     .module('app.core', dependencies)
     .config(config);
 
-export default core.name;
+export default module.name;

@@ -16,10 +16,10 @@ const dependencies = [
   core
 ];
 
-const mod =
+export const module =
   angular
     .module('app.main', dependencies)
     .config(routes)
     .component('main', mainComponent);
 
-export default mod.name;
+export default module.name;
