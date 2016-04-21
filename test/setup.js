@@ -11,6 +11,10 @@ global.window = global.document.defaultView;
 global.navigator = window.navigator = {};
 global.Node = window.Node;
 
+delete require.cache[require.resolve('angular')];
+delete require.cache[require.resolve('angular/angular')];
+delete require.cache[require.resolve('angular-mocks')];
+
 require('angular/angular');
 
 global.angular = window.angular;
@@ -20,6 +24,13 @@ global.angular = window.angular;
  * Can be called in the initial test file, or in each test file only when using ngMock.
  */
 function setupMock() {
+  delete require.cache[require.resolve('angular')];
+  delete require.cache[require.resolve('angular/angular')];
+  delete require.cache[require.resolve('angular-mocks')];
+
+  require('angular/angular');
+  global.angular = window.angular;
+
   window.mocha = true;
   window.beforeEach = beforeEach;
   window.afterEach = afterEach;

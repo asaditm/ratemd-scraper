@@ -1,4 +1,5 @@
 import { expect } from 'chai';
+
 import app from './index';
 
 /**
@@ -8,7 +9,7 @@ import app from './index';
  */
 setup();
 
-describe('Index module', () => {
+describe('Module: Index', () => {
   it('should be an Angular object', () => {
     const props = ['name', 'factory', 'service', 'controller', 'directive', 'component', 'config'];
     expect(app).to.be.an('object');

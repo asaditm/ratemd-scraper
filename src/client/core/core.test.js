@@ -1,8 +1,9 @@
 import { expect } from 'chai';
+
 import { module as core, default as name } from './core.module';
 import config from './core.config';
 
-describe('Core', () => {
+describe('Module: Core', () => {
   describe('Module', () => {
     it('should be an Angular object', () => {
       const props = ['name', 'factory', 'service', 'controller', 'directive', 'component', 'config'];

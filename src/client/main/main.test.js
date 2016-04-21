@@ -3,7 +3,7 @@ import { expect } from 'chai';
 import { module as main, default as name } from './main.module';
 import routes from './main.routes';
 
-describe('Main', () => {
+describe('Module: Main', () => {
   describe('Module', () => {
     it('should be an Angular object', () => {
       const props = ['name', 'factory', 'service', 'controller', 'directive', 'component', 'config'];
@@ -25,11 +25,8 @@ describe('Main', () => {
   });
 
   describe('Routes', () => {
-    const stateProviderMock = {
-      state: () => {}
-    };
-
-    it('should be return an array of states', () => {
+    const stateProviderMock = { state: () => {} };
+    it('should return an array of states', () => {
       const states = routes(stateProviderMock);
       expect(states).to.be.an('array');
       for (const state of states) {
@@ -39,6 +36,23 @@ describe('Main', () => {
   });
 
   describe('Component', () => {
+    var scope, element = undefined;
 
+    beforeEach(() => {
+      angular.mock.module(name);
+      // TODO Currently broken if using --watch, maybe switch to karma
+      global.inject(($rootScope, $compile) => {
+        scope = $rootScope.$new();
+        element = angular.element('<main name="{{mockName}}"></main>');
+        element = $compile(element)(scope);
+        scope.mockName = 'John Doe';
+        scope.$apply();
+      });
+    });
+
+    it('should render the text', () => {
+      const div = element.find('div');
+      expect(div.text()).to.equal(`Hello ${scope.mockName}`);
+    });
   });
 });
