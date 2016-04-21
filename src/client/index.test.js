@@ -1,5 +1,5 @@
 import { assert } from 'chai';
-// import app from './index';
+import app from './index';
 
 describe('Index', () => {
   it('should be true', () => {

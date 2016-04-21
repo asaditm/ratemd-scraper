@@ -83,7 +83,7 @@ const devConfig = {
       open: false
     })
   ]
-}
+};
 
 /**
  * Config for production
@@ -105,7 +105,7 @@ const prodConfig = {
       }
     })
   ]
-}
+};
 
 /**
  * Config for running tests with mocha-webpack
@@ -117,12 +117,18 @@ const testsConfig = {
   },
   entry: {},
   target: 'node',
-  externals: [nodeExternals()],
+  externals: [nodeExternals({
+    whitelist: [
+      'font-awesome/css/font-awesome.css',
+      'skeleton-css/css/skeleton.css',
+      'normalize.css/normalize']
+  })],
   devtool: 'cheap-module-source-map',
   module: {
     loaders: [
-      { test: /\.(jpe|jpg|woff|woff2|eot|ttf|svg|png|scss|css|html)(\?.*$|$)/, loader: 'ignore-loader' },
-      { test: /\.js$/, exclude: /(node_modules)/, loader: 'ng-annotate!babel' }
+      { test: /\.(jpe|jpg|woff|woff2|eot|ttf|svg|png|scss|css|html)(\?.*$|$)/, loader: 'null-loader' },
+      { test: /\.js$/, exclude: /(node_modules)/, loader: 'ng-annotate!babel' },
+      { test: /\.json$/, loader: 'file?name=json/[name].[ext]' }
     ]
   }
 };
