@@ -35,27 +35,40 @@ describe('Module: Main', () => {
     });
   });
 
-  /**
-   * Currently broken.  $injector becomes null.
-   * Maybe switch to karma with karma-webpack instead
-   */
+  const mockName = 'John Doe';
+
   describe('Component', () => {
-    let scope, element = undefined;
-    beforeEach(() => {
-      angular.mock.module(name);
-      // TODO Currently broken if using --watch, maybe switch to karma
-      global.inject(($rootScope, $compile) => {
-        scope = $rootScope.$new();
-        element = angular.element('<main name="{{mockName}}"></main>');
-        element = $compile(element)(scope);
-        scope.mockName = 'John Doe';
-        scope.$apply();
+    describe('Element', () => {
+      let scope, element = undefined;
+      beforeEach(() => {
+        angular.mock.module(name);
+        global.inject(($rootScope, $compile) => {
+          scope = $rootScope.$new();
+          element = angular.element('<main name="{{mockName}}"></main>');
+          element = $compile(element)(scope);
+          scope.mockName = mockName;
+          scope.$apply();
+        });
+      });
+
+      it('should render the text', () => {
+        const div = element.find('div');
+        expect(div.text()).to.equal(`Hello ${mockName}`);
       });
     });
 
-    it('should render the text', () => {
-      const div = element.find('div');
-      expect(div.text()).to.equal(`Hello ${scope.mockName}`);
+    describe('Controller', () => {
+      let controller, scope = undefined;
+      beforeEach(angular.mock.module(name));
+      beforeEach(global.inject(($rootScope, $componentController) => {
+        scope = $rootScope.$new();
+        controller = $componentController('main', { $scope: scope }, { name: mockName });
+      }));
+
+      it('should have bindings bound', () => {
+        expect(controller.name).to.exist;
+        expect(controller.name).to.equal(mockName);
+      });
     });
   });
 });

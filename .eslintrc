@@ -25,7 +25,8 @@
     "no-param-reassign": 0,
     "no-unused-vars": 0,
     "one-var-declaration-per-line": 0,
-    "one-var": 0
+    "one-var": 0,
+    "no-unused-expressions": 0
   },
   "plugins": [
     "react", "import"

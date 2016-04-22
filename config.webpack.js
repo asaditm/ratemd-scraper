@@ -110,12 +110,8 @@ const prodConfig = {
  * Config for running tests with mocha-webpack
  */
 const testsConfig = {
-  output: {
-    devtoolModuleFilenameTemplate: '[absolute-resource-path]',
-    devtoolFallbackModuleFilenameTemplate: '[absolute-resource-path]?[hash]'
-  },
   entry: {},
-  devtool: 'cheap-module-source-map',
+  devtool: 'inline-source-map',
   module: {
     loaders: [
       { test: /\.(jpe|jpg|woff|woff2|eot|ttf|svg|png)(\?.*$|$)/, loader: 'null-loader' },
