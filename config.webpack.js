@@ -1,7 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
 
-const nodeExternals = require('webpack-node-externals');
 const CommonsChunkPlugin = require('webpack/lib/optimize/CommonsChunkPlugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanPlugin = require('clean-webpack-plugin');
@@ -116,17 +115,12 @@ const testsConfig = {
     devtoolFallbackModuleFilenameTemplate: '[absolute-resource-path]?[hash]'
   },
   entry: {},
-  target: 'node',
-  externals: [nodeExternals({
-    whitelist: [
-      'font-awesome/css/font-awesome.css',
-      'skeleton-css/css/skeleton.css',
-      'normalize.css/normalize']
-  })],
   devtool: 'cheap-module-source-map',
   module: {
     loaders: [
-      { test: /\.(jpe|jpg|woff|woff2|eot|ttf|svg|png|scss|css|html)(\?.*$|$)/, loader: 'null-loader' },
+      { test: /\.(jpe|jpg|woff|woff2|eot|ttf|svg|png)(\?.*$|$)/, loader: 'null-loader' },
+      { test: /\.css$/, loader: 'style!css' },
+      { test: /\.scss$/, loader: 'style!css!sass-loader' },
       { test: /\.js$/, exclude: /(node_modules)/, loader: 'ng-annotate!babel' },
       { test: /\.json$/, loader: 'file?name=json/[name].[ext]' }
     ]
@@ -141,7 +135,7 @@ const config = {
   development: devConfig,
   test: testsConfig
 }[process.env.NODE_ENV || 'development'];
-console.log('Running in %s mode', process.env.NODE_ENV);
+console.log('Webpack is running in %s mode', process.env.NODE_ENV);
 
 /**
  * Combine with shared config then export
