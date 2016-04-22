@@ -28,9 +28,6 @@ function setupMock() {
   delete require.cache[require.resolve('angular/angular')];
   delete require.cache[require.resolve('angular-mocks')];
 
-  require('angular/angular');
-  global.angular = window.angular;
-
   window.mocha = true;
   window.beforeEach = beforeEach;
   window.afterEach = afterEach;

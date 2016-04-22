@@ -5,8 +5,8 @@ build:
   image: node:wheezy
   commands:
     - npm install --unsafe-perm
+    - npm run lint
     - npm test
-    - npm run build
 
 # Example deploy, check readme and github.com/jordond/docker-basesite for more info
 # deploy:
