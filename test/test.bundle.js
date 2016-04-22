@@ -16,5 +16,5 @@ import mocks from 'angular-mocks';
 /**
  * Find and require all of the *.test files
  */
-const context = require.context('./src/client', true, /\.test\.js/);
+const context = require.context('../src/client', true, /\.test\.js/);
 context.keys().forEach(context);

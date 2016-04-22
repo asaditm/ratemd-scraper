@@ -6,7 +6,8 @@
     "mocha": true
   },
   "globals": {
-    "angular": true
+    "angular": true,
+    "inject": true
   },
   "rules": {
     "import/default": 0,
