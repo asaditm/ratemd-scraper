@@ -1,5 +1,7 @@
 # Angular ES6 Starter
 
+[![Build Status](https://drone.hoogit.ca/api/badges/jordond/angular-es6-starter/status.svg)](https://drone.hoogit.ca/jordond/angular-es6-starter)
+
 A starter application for a front-end only website powered by Angular, webpack and ES6.  Included is a simple node server to host the website.  Which can then be reverse proxied with nginx.
 
 My current workflow is to turn this project into a Docker container, then reverse proxy with Nginx.  More information can be found [Here](https://github.com/jordond/docker-baseSite).  The automatic deployment is handled by Drone.io and the `.drone.yml` configuration file.
