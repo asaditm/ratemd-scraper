@@ -17,7 +17,7 @@ function register(app, config) {
   app.route('/')
   .get((req, res) => {
     res.setHeader('Content-Type', 'text/html');
-    createReadStream(join(config.dir.static, 'dist', 'index.html'))
+    createReadStream(join(config.dir.static, 'client', 'index.html'))
       .pipe(res);
   });
 }

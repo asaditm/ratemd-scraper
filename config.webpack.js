@@ -7,7 +7,7 @@ const CleanPlugin = require('clean-webpack-plugin');
 const BrowserSyncPlugin = require('browser-sync-webpack-plugin');
 
 const projectRoot = path.resolve(__dirname);
-const assetPath = path.resolve('./static/dist');
+const assetPath = path.resolve('./static/client');
 const htmlIndex = path.resolve('./src/client/index.html');
 const entryJS = path.resolve('./src/client/index.js');
 
@@ -40,7 +40,7 @@ const sharedConfig = {
   },
   output: {
     path: assetPath,
-    publicPath: 'dist/'
+    publicPath: 'client/'
   },
   module: {
     preLoaders: [
