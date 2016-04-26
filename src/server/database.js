@@ -4,76 +4,60 @@ import { EventEmitter } from 'events';
 import mkdirp from 'mkdirp';
 import Sequelize from 'sequelize';
 
-export const database = {};
+import doctorModel from './api/doctors/doctor.model';
+import reviewModel from './api/reviews/review.model';
 
-export default class Database {
-  init(app) {
-    const options = {
-      dialect: 'sqlite',
-      storage: path.join(__dirname, 'data', 'database.sqlite')
-    }
+let instance, doctor, review = {};
 
-    mkdirp.sync(path.dirname(options.storage));
+function init() {
+  const options = {
+    dialect: 'sqlite',
+    storage: path.join(__dirname, 'data', 'database.sqlite')
+  };
+  mkdirp.sync(path.dirname(options.storage));
 
-    Object.assign(database, {
-      Sequelize: Sequelize,
-      instance: new Sequelize('data', 'admin', 'admin', options),
-      models: {},
-      register: this.register,
-      events: new DatabaseEvents()
-    });
-  }
+  instance = new Sequelize('database', 'admin', 'admin', options);
 
-  register(model) {
-    if (database.instance) {
-      const modelInstance = database.instance.define(model.name, model.schema, model.methods);
-      database.events.register(modelInstance);
+  doctor = instance.define(doctorModel.name, doctorModel.schema);
+  review = instance.define(reviewModel.name, reviewModel.schema);
 
-      const registered = {};
-      registered[model.name] = modelInstance;
-      Object.assign(database.models, registered);
-    } else {
-      console.error('Database has not been initialized', database);
-    }
-  }
+  doctor.hasOne(review);
+  doctor.sync();
+  review.sync();
 
-  sync() {
-    const promises = [];
-    console.log('Syncing database');
-    promises.push(database.instance.sync());
-    for (const model of Object.keys(database.models)) {
-      promises.push(database.models[model].sync());
-    }
-    return Promise.all(promises);
-  }
-
-  finalize() {
-    console.log('Finalizing database initialization');
-    return this.sync()
-      .then(() => {
-        console.log('Registered all models');
-      })
-      .catch((err) => {
-        console.error('Registering databases failed', err);
-        throw err;
-      });
-  }
+  return Promise.resolve();
 }
 
-class DatabaseEvents extends EventEmitter {
-  constructor() {
-    super();
-  }
-
-  register(model) {
-    model.afterBulkCreate('bulkCreate', (attr) => this.emit('bulkSave', attr));
-    model.afterBulkUpdate('bulkUpdate', (attr) => this.emit('bulkSave', attr));
-    model.afterBulkDelete('bulkDelete', (attr) => this.emit('bulkCreate', attr));
-
-    model.afterCreate('create', (attr) => this.emit('save', attr));
-    model.afterUpdate('update', (attr) => this.emit('save', attr));
-    model.afterDelete('delete', (attr) => this.emit('delete', attr));
-
-    return model;
-  }
+export function sequelize() {
+  return instance;
 }
+
+export function Doctor() {
+  return doctor;
+}
+
+export function Review() {
+  return review;
+}
+
+export default { init };
+
+
+// Add socket events?
+// class DatabaseEvents extends EventEmitter {
+//   constructor() {
+//     super();
+//   }
+
+//   register(model) {
+//     model.afterBulkCreate('bulkCreate', (attr) => this.emit('bulkSave', attr));
+//     model.afterBulkUpdate('bulkUpdate', (attr) => this.emit('bulkSave', attr));
+//     model.afterBulkDelete('bulkDelete', (attr) => this.emit('bulkCreate', attr));
+
+//     model.afterCreate('create', (attr) => this.emit('save', attr));
+//     model.afterUpdate('update', (attr) => this.emit('save', attr));
+//     model.afterDelete('delete', (attr) => this.emit('delete', attr));
+
+//     return model;
+//   }
+// }

@@ -1,3 +1,4 @@
+/* eslint-disable */
 var Xray = require('x-ray');
 var util = require('util');
 

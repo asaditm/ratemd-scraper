@@ -1,21 +1,25 @@
 import express from 'express';
+import { createReadStream } from 'fs';
+import { join } from 'path';
 
-import { database } from './database';
-import routeDoctors from './api/doctors/doctors.routes';
+import doctors from './api/doctors/doctor.routes';
 
-class Routes {
-  init(app, config) {
-    console.log('Registering routes');
+function register(app, config) {
+  // Register the api routes
+  const router = express.Router();
+  doctors(router);
+  router.route('/').all((req, res) => res.status(200).json('You\'ve reached the API'));
+  router.route('/*').all((req, res) => res.status(404).json('Invalid API Route'));
 
-    // Api routes
-    database.register()
+  app.use('/api', router);
 
-    // Static routes
-    app.route('/')
-      .get((req, res) => {
-        res.setHeader('Content-Type', 'text/html');
-        fs.createReadStream(join(config.dir.static, 'dist', 'index.html'))
-          .pipe(res);
-      });
-  }
+  // Register the static routes
+  app.route('/')
+  .get((req, res) => {
+    res.setHeader('Content-Type', 'text/html');
+    createReadStream(join(config.dir.static, 'dist', 'index.html'))
+      .pipe(res);
+  });
 }
+
+export default { register };

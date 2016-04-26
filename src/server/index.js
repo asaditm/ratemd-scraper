@@ -6,6 +6,9 @@
  * Ensure that they have been compiled by running `npm build`
  */
 
+import { install } from 'source-map-support';
+install();
+
 import { join } from 'path';
 import * as http from 'http';
 import * as fs from 'fs';
@@ -15,6 +18,14 @@ import PrettyError from 'pretty-error';
 import favicon from 'serve-favicon';
 import compression from 'compression';
 import morgan from 'morgan';
+import bodyParser from 'body-parser';
+import methodOverride from 'method-override';
+import cookieParser from 'cookie-parser';
+import errorHandler from 'errorhandler';
+import helmet from 'helmet';
+
+import database from './database';
+import routes from './routes';
 
 const pretty = new PrettyError();
 const app = new Express();
@@ -35,7 +46,7 @@ const environment = {
 const config = Object.assign({
   port: process.env.PORT,
   dir: {
-    static: join(__dirname, '..', 'static')
+    static: join(__dirname, '../..', 'static')
   }
 }, environment);
 
@@ -43,6 +54,11 @@ const config = Object.assign({
  * Setup the application
  */
 app.use(compression());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+app.use(methodOverride());
+app.use(cookieParser());
+app.use(helmet());
 app.use(Express.static(config.dir.static));
 app.use(favicon(join(config.dir.static, 'favicon.ico')));
 
@@ -52,19 +68,14 @@ if (config.isProduction) {
   }));
 } else {
   app.use(morgan('dev'));
+  app.use(errorHandler());
 }
 
 /**
- * Routes
+ * Setup the database then routes
  */
-
-// All unregistered routes should send index
-app.route('/')
-  .get((req, res) => {
-    res.setHeader('Content-Type', 'text/html');
-    fs.createReadStream(join(config.dir.static, 'dist', 'index.html'))
-      .pipe(res);
-  });
+database.init()
+  .then(() => routes.register(app, config));
 
 /**
  * Start the server
