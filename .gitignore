@@ -18,4 +18,7 @@ Thumbs.db
 
 typings/
 
-dist/
+static/dist/
+static/server/
+static/client/
+static/data/

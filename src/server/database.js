@@ -9,10 +9,10 @@ import reviewModel from './api/reviews/review.model';
 
 let instance, doctor, review = {};
 
-function init() {
+function init(config) {
   const options = {
     dialect: 'sqlite',
-    storage: path.join(__dirname, 'data', 'database.sqlite')
+    storage: path.join(config.dir.static, 'data', 'database.sqlite')
   };
   mkdirp.sync(path.dirname(options.storage));
 

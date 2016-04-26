@@ -74,7 +74,7 @@ if (config.isProduction) {
 /**
  * Setup the database then routes
  */
-database.init()
+database.init(config)
   .then(() => routes.register(app, config));
 
 /**
