@@ -1,18 +1,18 @@
 {
-  "name": "angular-es6-starter",
+  "name": "rate-md-scraper",
   "version": "0.0.1",
-  "description": "Simple starter kit for angular and es6",
-  "main": "./bin/server.js",
+  "description": "Scraper for ratemds.com",
+  "main": "./bin/index.js",
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/jordond/angular-es6-starter.git"
+    "url": "git+ssh://git@github.com/jordond/ratemdscraper.git"
   },
   "author": "Jordon de Hoog",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/jordond/angular-es6-starter/issues"
+    "url": "https://github.com/jordond/ratemdscraper/issues"
   },
-  "homepage": "https://github.com/jordond/angular-es6-starter#readme",
+  "homepage": "https://github.com/jordond/ratemdscraper#readme",
   "scripts": {
     "test": "better-npm-run test",
     "test-watch": "npm test -- --auto-watch --no-single-run",
