@@ -74,8 +74,13 @@ if (config.isProduction) {
 /**
  * Setup the database then routes
  */
-database.init(config)
-  .then(() => routes.register(app, config));
+database
+  .init(config)
+  .then(() => routes.register(app, config))
+  .catch((err) => {
+    console.error('Error intializing server');
+    throw err;
+  });
 
 /**
  * Start the server

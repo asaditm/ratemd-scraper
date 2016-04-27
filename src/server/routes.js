@@ -20,6 +20,8 @@ function register(app, config) {
     createReadStream(join(config.dir.static, 'client', 'index.html'))
       .pipe(res);
   });
+
+  Promise.resolve();
 }
 
 export default { register };

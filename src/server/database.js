@@ -4,8 +4,9 @@ import { EventEmitter } from 'events';
 import mkdirp from 'mkdirp';
 import Sequelize from 'sequelize';
 
-import doctorModel from './api/doctors/doctor.model';
-import reviewModel from './api/reviews/review.model';
+import { Doctor as modelDoctor, Review as modelReview } from './api/doctors/doctor.model';
+
+const force = process.env.FORCE_CREATE;
 
 let instance, doctor, review = {};
 
@@ -18,12 +19,16 @@ function init(config) {
 
   instance = new Sequelize('database', 'admin', 'admin', options);
 
-  doctor = instance.define(doctorModel.name, doctorModel.schema);
-  review = instance.define(reviewModel.name, reviewModel.schema);
+  doctor = instance.define(modelDoctor.name, modelDoctor.schema);
+  review = instance.define(modelReview.name, modelReview.schema);
 
   doctor.hasOne(review);
-  doctor.sync();
-  review.sync();
+
+  if (force) {
+    console.log('Forcing the creation of tables');
+  }
+  doctor.sync({ force });
+  review.sync({ force });
 
   return Promise.resolve();
 }
