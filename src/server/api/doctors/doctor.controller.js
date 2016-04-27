@@ -51,7 +51,7 @@ class Controller {
         if (!doctor) {
           return notFound(res);
         }
-        doctor.destroy({ cascade: true })
+        doctor.destroy({ cascade: true });
       })
       .then((rowsDeleted) => res.status(200).json(rowsDeleted))
       .catch((err) => errorHandler(err, res));
