@@ -9,8 +9,13 @@ function register(router) {
 
   router
     .route('/doctors/:id')
+    .post(ctrl.update)
     .get(ctrl.show)
     .delete(ctrl.destroy);
+
+  router
+    .route('/doctors/:id/scrape')
+    .get(ctrl.scrape);
 }
 
 export default register;
