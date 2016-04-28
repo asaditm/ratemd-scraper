@@ -1,18 +1,20 @@
 import { single as scrapeSingle } from '../../scraper';
-import { Doctor } from '../../database';
+import { Doctor, Review } from '../../database';
+import { extractId } from '../../scraper/scraper';
 
 function notFound(res) {
   return res.status(404).json('Doctor not found');
 }
 
 function errorHandler(err, res) {
+  console.error('ErrorHandler: ', err);
   return res.status(500).json(err);
 }
 
 class Controller {
   all(req, res) {
     Doctor()
-      .findAll()
+      .findAll({ include: [{ model: Review() }] })
       .then((docs) => res.status(200).json(docs))
       .catch((err) => errorHandler(err, res));
   }
@@ -22,8 +24,13 @@ class Controller {
       siteId: req.body.siteId,
       url: req.body.url
     };
-    console.log(`Creating doctor with site id of ${newDoctor.siteId}`);
 
+    // Make sure id field isn't null
+    if (newDoctor.url) {
+      newDoctor.siteId = extractId(newDoctor.url);
+    }
+
+    console.log(`Creating doctor with site id of ${newDoctor.siteId}`);
     Doctor()
       .create(newDoctor)
       .then((value) => res.status(200).json(value))
@@ -46,13 +53,7 @@ class Controller {
     const id = req.params.id;
     console.log(`Deleting doctor with id of ${id}`);
     Doctor()
-      .findById(id)
-      .then((doctor) => {
-        if (!doctor) {
-          return notFound(res);
-        }
-        doctor.destroy({ cascade: true });
-      })
+      .destroy({ where: { id }, cascade: true })
       .then((rowsDeleted) => res.status(200).json(rowsDeleted))
       .catch((err) => errorHandler(err, res));
   }
@@ -64,7 +65,7 @@ class Controller {
         if (!doctor) {
           return notFound(res);
         }
-        res.status(200).json(doctor);
+        return res.status(200).json(doctor);
       }).catch((err) => errorHandler(err, res));
   }
 
@@ -77,7 +78,7 @@ class Controller {
         }
         console.log(`Forcing scrape of ${doctor.name}`);
         scrapeSingle(doctor);
-        res.status(200).json('Scraping has been triggered');
+        return res.status(200).json('Scraping has been triggered');
       }).catch((err) => errorHandler(err, res));
   }
 }

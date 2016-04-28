@@ -55,7 +55,7 @@ class Scraper {
       x(scrapeUrl, fields)((result) => {
         console.log(result);
         return resolve(result);
-      })
+      });
     });
   }
 

@@ -5,10 +5,24 @@ import mkdirp from 'mkdirp';
 import Sequelize from 'sequelize';
 
 import { Doctor as modelDoctor, Review as modelReview } from './api/doctors/doctor.model';
+import ScraperService from './scraper/service';
 
 const force = process.env.FORCE_CREATE;
+const scraper = new ScraperService();
 
 let instance, doctor, review = {};
+
+function scrapeOnCreate(createdDoctor) {
+  console.log(`Scraping new doctor with id of [${createdDoctor.siteId}]`);
+  scraper.single(createdDoctor)
+    .then((result) => {
+      if (!result) {
+        console.log(`Scraping for ${createdDoctor.siteId} failed, removing from database`);
+        createdDoctor.destroy();
+      }
+    })
+    .catch((err) => console.error('Error scraping on create', err));
+}
 
 function init(config) {
   const options = {
@@ -17,13 +31,18 @@ function init(config) {
   };
   mkdirp.sync(path.dirname(options.storage));
 
+  // Create instances of database and table
   instance = new Sequelize('database', 'admin', 'admin', options);
+  doctor = instance.define(modelDoctor.name, modelDoctor.schema, modelDoctor.methods);
+  review = instance.define(modelReview.name, modelReview.schema, modelReview.methods);
 
-  doctor = instance.define(modelDoctor.name, modelDoctor.schema);
-  review = instance.define(modelReview.name, modelReview.schema);
-
+  // Register associations
   doctor.hasOne(review);
 
+  // Register model hooks
+  doctor.afterCreate('createScrape', scrapeOnCreate);
+
+  // Create the tables in the database
   if (force) {
     console.log('Forcing the creation of tables');
   }
