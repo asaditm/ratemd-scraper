@@ -2,14 +2,15 @@
 
 import Sequelize from 'sequelize';
 
-import { safelyParseJSON } from '../../utils';
+import { safelyParseJSON, ensureHttpProtocol } from '../../utils';
 
 export const Doctor = {
   name: 'doctors',
   schema: {
-    siteId: { type: Sequelize.BIGINT, unique: true, allowNull: false },
     name: {
       type: Sequelize.STRING,
+      unique: false,
+      allowNull: false,
       set: function (value) {
         this.setDataValue('name', value.trim());
       }
@@ -21,10 +22,13 @@ export const Doctor = {
     url: {
       type: Sequelize.STRING,
       unique: true,
-      get: function () {
-        const url = 'https://www.ratemds.com/doctor-ratings/';
-        const id = this.getDataValue('siteId');
-        return `${url}${id}`;
+      allowNull: false,
+      validate: {
+        isUrl: true,
+        contains: 'ratemds.com/doctor-ratings'
+      },
+      set: function (value) {
+        this.setDataValue('url', ensureHttpProtocol(value));
       }
     },
     emailList: {

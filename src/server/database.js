@@ -14,11 +14,11 @@ const scraper = new ScraperService();
 let instance, doctor, review = {};
 
 function scrapeOnCreate(createdDoctor) {
-  console.log(`Scraping new doctor with id of [${createdDoctor.siteId}]`);
+  console.log(`Scraping newly created doctor [${createdDoctor.name}]`);
   scraper.single(createdDoctor)
     .then((result) => {
       if (!result) {
-        console.log(`Scraping for ${createdDoctor.siteId} failed, removing from database`);
+        console.log(`Scraping for [${createdDoctor.name}] failed, removing from database`);
         return createdDoctor.destroy();
       }
       console.log(`Scraping for newly created doctor [${result.name}] was a success`);
@@ -48,10 +48,9 @@ function init(config) {
   if (force) {
     console.log('Forcing the creation of tables');
   }
-  doctor.sync({ force });
-  review.sync({ force });
 
-  return Promise.resolve();
+  return doctor.sync({ force })
+    .then(() => review.sync({ force }));
 }
 
 export function sequelize() {

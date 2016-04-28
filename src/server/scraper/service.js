@@ -55,7 +55,7 @@ export class ScraperService {
         });
       })
       .catch((err) => {
-        console.error(`Failed to scrape doctor ${doctor.id}`, err);
+        console.error(`Failed to scrape doctor [${doctor.id}]`, err);
         return emit('scrape:failed', Object.assign(err, { doctor: { id: doctor.id } }));
       });
   }
@@ -64,11 +64,15 @@ export class ScraperService {
    * Scrape all the doctors in the database
    */
   all() {
-    emit('scrapeAll:start');
     return Doctor().findAll()
       .then((doctors) => {
-        console.log(`Scraping [${doctors.length}] doctors.`);
+        if (doctors.length === 0) {
+          console.log('[ScraperService] Nothing to do');
+          return;
+        }
 
+        emit('scrapeAll:start');
+        console.log(`Scraping [${doctors.length}] doctors.`);
         const scrapePromises = [];
         for (const doctor of doctors) {
           scrapePromises.push(this.single(doctor));
@@ -77,13 +81,9 @@ export class ScraperService {
         return Promise.all(scrapePromises).then(() => {
           console.log('Scraping for all doctors finished');
           emit('scrapeAll:finish');
-
-          // Schedule next scrape
         });
       })
-      .catch((err) => {
-        console.error('Error finding all doctors', err);
-      });
+      .catch((err) => console.error('Error finding all doctors', err));
   }
 }
 

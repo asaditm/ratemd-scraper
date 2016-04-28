@@ -21,23 +21,13 @@ class Controller {
   }
 
   create(req, res) {
-    const newDoctor = {
-      siteId: req.body.siteId
-    };
+    const url = req.body.url;
 
-    // Make sure id field isn't null
-    if (req.body.url) {
-      newDoctor.siteId = extractId(req.body.url);
-      if (newDoctor.siteId === -1) {
-        return res.status(400).json(createHttpError('Malformed URL', req.body.url));
-      }
-    }
-
-    validate(newDoctor.siteId)
-      .then(() => {
-        console.log(`Creating doctor with site id of ${newDoctor.siteId}`);
+    validate(url)
+      .then((name) => {
+        console.log(`Creating new doctor [${name}]`);
         Doctor()
-          .create(newDoctor)
+          .create({ url, name })
           .then((value) => res.status(200).json(value))
           .catch((err) => errorHandler(err, res));
       })
@@ -50,10 +40,7 @@ class Controller {
         if (!doctor) {
           return notFound(res);
         }
-        const updated = Object.assign(req.body, {
-          emailList: JSON.stringify(req.body.emailList)
-        });
-        return doctor.update(updated)
+        return doctor.update(req.body)
           .then((result) => res.status(200).json(result));
       })
       .catch((err) => errorHandler(err, res));

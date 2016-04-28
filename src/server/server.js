@@ -78,6 +78,7 @@ if (config.isProduction) {
 database
   .init(config)
   .then(() => routes.register(app, config))
+  .then(() => scraper.start())
   .catch((err) => {
     console.error('Error intializing server');
     throw err;
@@ -93,7 +94,6 @@ if (config.port) {
       console.error(pretty.render(err));
     } else {
       console.info('\n==>     ✅ OK %s is running on http://localhost:%s.', config.title, config.port);
-      scraper.start();
     }
   });
 } else {
