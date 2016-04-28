@@ -1,6 +1,6 @@
 import Controller from './doctor.controller';
 
-function register(router) {
+export function register(router) {
   const ctrl = new Controller();
   router
     .route('/doctors')
@@ -18,4 +18,4 @@ function register(router) {
     .get(ctrl.scrape);
 }
 
-export default register;
+export default { register };

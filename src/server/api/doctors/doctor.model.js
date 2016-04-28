@@ -2,34 +2,18 @@
 
 import Sequelize from 'sequelize';
 
-function arrayToJSON(array) {
-  return JSON.stringify(array);
-}
-
-function emailListToJSON(model) {
-  model.emailList = arrayToJSON(model.emailList);
-}
-
-function ratingBreakdownToJSON(model) {
-  model.ratingBreakdown = arrayToJSON(model.ratingBreakdown);
-}
-
-function safelyParseJSON(json) {
-  if (!json) {
-    return '';
-  }
-  try {
-    return JSON.parse(json);
-  } catch (err) {
-    console.log('Could not parse JSON', json, err);
-  }
-}
+import { safelyParseJSON } from '../../utils';
 
 export const Doctor = {
   name: 'doctors',
   schema: {
     siteId: { type: Sequelize.BIGINT, unique: true, allowNull: false },
-    name: Sequelize.STRING,
+    name: {
+      type: Sequelize.STRING,
+      set: function (value) {
+        this.setDataValue('name', value.trim());
+      }
+    },
     reviewCount: Sequelize.INTEGER,
     rating: Sequelize.DECIMAL,
     bestRating: Sequelize.DECIMAL,
@@ -38,37 +22,11 @@ export const Doctor = {
     emailList: {
       type: Sequelize.TEXT,
       get: function () {
-        safelyParseJSON(this.getDataValue('emailList'));
+        return safelyParseJSON(this.getDataValue('emailList')) || [];
+      },
+      set: function (value) {
+        this.setDataValue('emailList', JSON.stringify(value));
       }
-    }
-  },
-  methods: {
-    hooks: {
-      beforeCreate: emailListToJSON,
-      beforeUpdate: emailListToJSON
-    }
-  }
-};
-
-export const Review = {
-  name: 'review',
-  schema: {
-    reviewId: Sequelize.STRING,
-    author: Sequelize.STRING,
-    rating: Sequelize.DECIMAL,
-    ratingBreakdown: {
-      type: Sequelize.TEXT,
-      get: function () {
-        safelyParseJSON(this.getDataValue('ratingBreakdown'));
-      }
-    },
-    comment: Sequelize.TEXT,
-    created: Sequelize.STRING
-  },
-  methods: {
-    hooks: {
-      beforeCreate: ratingBreakdownToJSON,
-      beforeUpdate: ratingBreakdownToJSON
     }
   }
 };

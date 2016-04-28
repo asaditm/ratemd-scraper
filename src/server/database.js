@@ -4,7 +4,8 @@ import { EventEmitter } from 'events';
 import mkdirp from 'mkdirp';
 import Sequelize from 'sequelize';
 
-import { Doctor as modelDoctor, Review as modelReview } from './api/doctors/doctor.model';
+import { Doctor as modelDoctor } from './api/doctors/doctor.model';
+import { Review as modelReview } from './api/reviews/review.model';
 import ScraperService from './scraper/service';
 
 const force = process.env.FORCE_CREATE;
@@ -18,8 +19,9 @@ function scrapeOnCreate(createdDoctor) {
     .then((result) => {
       if (!result) {
         console.log(`Scraping for ${createdDoctor.siteId} failed, removing from database`);
-        createdDoctor.destroy();
+        return createdDoctor.destroy();
       }
+      console.log(`Scraping for newly created doctor [${result.name}] was a success`);
     })
     .catch((err) => console.error('Error scraping on create', err));
 }
@@ -33,11 +35,11 @@ function init(config) {
 
   // Create instances of database and table
   instance = new Sequelize('database', 'admin', 'admin', options);
-  doctor = instance.define(modelDoctor.name, modelDoctor.schema, modelDoctor.methods);
-  review = instance.define(modelReview.name, modelReview.schema, modelReview.methods);
+  doctor = instance.define(modelDoctor.name, modelDoctor.schema);
+  review = instance.define(modelReview.name, modelReview.schema);
 
   // Register associations
-  doctor.hasOne(review);
+  doctor.hasOne(review, { onDelete: 'cascade', hooks: true });
 
   // Register model hooks
   doctor.afterCreate('createScrape', scrapeOnCreate);

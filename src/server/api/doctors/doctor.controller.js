@@ -1,4 +1,4 @@
-import { single as scrapeSingle } from '../../scraper';
+import scraper from '../../scraper';
 import { Doctor, Review } from '../../database';
 import { extractId } from '../../scraper/scraper';
 
@@ -22,7 +22,8 @@ class Controller {
   create(req, res) {
     const newDoctor = {
       siteId: req.body.siteId,
-      url: req.body.url
+      url: req.body.url,
+      emailList: JSON.stringify(req.body.emailList)
     };
 
     // Make sure id field isn't null
@@ -43,7 +44,10 @@ class Controller {
         if (!doctor) {
           return notFound(res);
         }
-        return doctor.update(req.body)
+        const updated = Object.assign(req.body, {
+          emailList: JSON.stringify(req.body.emailList)
+        });
+        return doctor.update(updated)
           .then((result) => res.status(200).json(result));
       })
       .catch((err) => errorHandler(err, res));
@@ -53,14 +57,14 @@ class Controller {
     const id = req.params.id;
     console.log(`Deleting doctor with id of ${id}`);
     Doctor()
-      .destroy({ where: { id }, cascade: true })
+      .destroy({ where: { id } })
       .then((rowsDeleted) => res.status(200).json(rowsDeleted))
       .catch((err) => errorHandler(err, res));
   }
 
   show(req, res) {
     Doctor()
-      .findById(req.params.id)
+      .findById(req.params.id, { include: [{ model: Review() }] })
       .then((doctor) => {
         if (!doctor) {
           return notFound(res);
@@ -77,7 +81,7 @@ class Controller {
           return notFound(res);
         }
         console.log(`Forcing scrape of ${doctor.name}`);
-        scrapeSingle(doctor);
+        scraper.single(doctor);
         return res.status(200).json('Scraping has been triggered');
       }).catch((err) => errorHandler(err, res));
   }
