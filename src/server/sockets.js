@@ -1,3 +1,3 @@
 export function emit(event, data, callback) {
-  console.log(`Emitting ${event}`);
+  console.log(`Emitting ${event}`, data || {});
 }

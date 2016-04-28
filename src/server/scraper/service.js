@@ -10,7 +10,7 @@ export class ScraperService {
    * @param object doctor Doctor object to scrape
    */
   single(doctor) {
-    emit('scrape:start', doctor);
+    emit('scrape:start', doctor.id); // TODO change back to doctor
 
     const scraper = new Scraper();
     return scraper.fullScrape().fromDoctor(doctor)
@@ -24,36 +24,39 @@ export class ScraperService {
         doctor.update(result.doctor);
 
         // Get the latest review and compare with results
-        const scrapedReview = result.review;
         return doctor.getReview().then((oldReview) => {
           let isNewer = false;
           if (oldReview) {
-            isNewer = oldReview.reviewId !== scrapedReview.reviewId;
+            isNewer = oldReview.reviewId !== result.review.reviewId;
           }
 
-          if (!oldReview || isNewer) {
-            return Review().create(scrapedReview)
-              .then((reviewInstance) => doctor.setReview(reviewInstance))
-              .then(() => {
-                emit('scrape:finish', doctor);
-                if (isNewer) {
-                  // TODO Email Admin + all users in doctor:emailList
-                }
-                return doctor;
-              })
-              .catch((err) => {
-                console.error('Setting doctors review failed', err);
-                emit('scrape:failed', err);
-                throw err;
-              });
+          let query;
+          if (!oldReview) {
+            query = Review().create(result.review)
+              .then((reviewInstance) => doctor.setReview(reviewInstance));
+          } else if (isNewer) {
+            query = oldReview.update(result.review);
           }
-          emit('scrape:finish', doctor);
+
+          // If there is no review, or a newer review emit finish event
+          if (query) {
+            return query.then(() => {
+              emit('scrape:finish', Object.assign(doctor, { review: result.review }).id);
+              if (isNewer) {
+                // TODO Email Admin + all users in doctor:emailList
+              }
+              return doctor;
+            });
+          }
+
+          // Nothing to do, finish up
+          emit('scrape:finish', Object.assign(doctor, { review: oldReview }).id); // TODO change back to doctor
           return doctor;
         });
       })
       .catch((err) => {
-        console.error(`Failed to scrape doctor ${doctor.siteId}`, err);
-        return emit('scrape:failed', err);
+        console.error(`Failed to scrape doctor ${doctor.id}`, err);
+        return emit('scrape:failed', Object.assign(err, { doctor: { id: doctor.id } }));
       });
   }
 
@@ -62,7 +65,7 @@ export class ScraperService {
    */
   all() {
     emit('scrapeAll:start');
-    Doctor.findAll()
+    return Doctor().findAll()
       .then((doctors) => {
         console.log(`Scraping [${doctors.length}] doctors.`);
 
@@ -71,7 +74,7 @@ export class ScraperService {
           scrapePromises.push(this.single(doctor));
         }
 
-        Promise.all(scrapePromises).then(() => {
+        return Promise.all(scrapePromises).then(() => {
           console.log('Scraping for all doctors finished');
           emit('scrapeAll:finish');
 

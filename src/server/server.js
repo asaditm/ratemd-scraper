@@ -26,6 +26,7 @@ import helmet from 'helmet';
 
 import database from './database';
 import routes from './routes';
+import scraper from './scraper';
 
 const pretty = new PrettyError();
 const app = new Express();
@@ -92,6 +93,7 @@ if (config.port) {
       console.error(pretty.render(err));
     } else {
       console.info('\n==>     ✅ OK %s is running on http://localhost:%s.', config.title, config.port);
+      scraper.start();
     }
   });
 } else {

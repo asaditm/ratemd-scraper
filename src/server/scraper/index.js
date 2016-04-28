@@ -12,7 +12,7 @@ export function start(interval = DEFAULT_INTERVAL) {
     return;
   }
   console.log(`Scheduling scraper for every ${interval / MINUTE_IN_MILLIS} minutes`);
-  serviceHandler = setInterval(service.all, interval);
+  serviceHandler = setInterval(() => service.all(), interval);
 
   service.all();
 }
