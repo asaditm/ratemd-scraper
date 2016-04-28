@@ -18,7 +18,15 @@ export const Doctor = {
     rating: Sequelize.DECIMAL,
     bestRating: Sequelize.DECIMAL,
     worstRating: Sequelize.DECIMAL,
-    url: { type: Sequelize.STRING, unique: true },
+    url: {
+      type: Sequelize.STRING,
+      unique: true,
+      get: function () {
+        const url = 'https://www.ratemds.com/doctor-ratings/';
+        const id = this.getDataValue('siteId');
+        return `${url}${id}`;
+      }
+    },
     emailList: {
       type: Sequelize.TEXT,
       get: function () {

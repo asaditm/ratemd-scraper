@@ -8,3 +8,11 @@ export function safelyParseJSON(json) {
     console.log('Could not parse JSON', json, err);
   }
 }
+
+export function createHttpError(message, data) {
+  return {
+    status: 'error',
+    data,
+    message
+  };
+}
