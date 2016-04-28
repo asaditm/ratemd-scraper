@@ -1,6 +1,7 @@
 import scraper from '../../scraper';
 import { Doctor, Review } from '../../database';
-import { extractId } from '../../scraper/scraper';
+import { extractId, validate } from '../../scraper/scraper';
+import { createHttpError } from '../../utils';
 
 function notFound(res) {
   return res.status(404).json('Doctor not found');
@@ -21,21 +22,26 @@ class Controller {
 
   create(req, res) {
     const newDoctor = {
-      siteId: req.body.siteId,
-      url: req.body.url,
-      emailList: JSON.stringify(req.body.emailList)
+      siteId: req.body.siteId
     };
 
     // Make sure id field isn't null
-    if (newDoctor.url) {
-      newDoctor.siteId = extractId(newDoctor.url);
+    if (req.body.url) {
+      newDoctor.siteId = extractId(req.body.url);
+      if (newDoctor.siteId === -1) {
+        return res.status(400).json(createHttpError('Malformed URL', req.body.url));
+      }
     }
 
-    console.log(`Creating doctor with site id of ${newDoctor.siteId}`);
-    Doctor()
-      .create(newDoctor)
-      .then((value) => res.status(200).json(value))
-      .catch((err) => errorHandler(err, res));
+    validate(newDoctor.siteId)
+      .then(() => {
+        console.log(`Creating doctor with site id of ${newDoctor.siteId}`);
+        Doctor()
+          .create(newDoctor)
+          .then((value) => res.status(200).json(value))
+          .catch((err) => errorHandler(err, res));
+      })
+      .catch((err) => res.status(400).json(err));
   }
 
   update(req, res) {

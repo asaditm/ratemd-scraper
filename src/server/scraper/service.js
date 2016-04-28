@@ -13,7 +13,7 @@ export class ScraperService {
     emit('scrape:start', doctor);
 
     const scraper = new Scraper();
-    return scraper.scrape().fromDoctor(doctor)
+    return scraper.fullScrape().fromDoctor(doctor)
       .then((result) => {
         // Check to make sure the scraped id was valid
         if (!result.doctor.name) {
