@@ -34,13 +34,15 @@ class Scraper {
     return new Promise((resolve, reject) => {
       const scrapeUrl = websiteUrl + doctorId + '/';
       const fields = {
-        name: 'h1[itemprop=name]',
-        reviewCount: 'span[itemprop=aggregateRating] > span[itemprop=ratingCount]',
-        rating: 'span[itemprop=aggregateRating] > meta[itemprop=ratingValue] @content',
-        bestRating: 'span[itemprop=aggregateRating] > meta[itemprop=bestRating] @content',
-        worstRating: 'span[itemprop=aggregateRating] > meta[itemprop=worstRating] @content',
+        doctor: {
+          name: 'h1[itemprop=name]',
+          reviewCount: 'span[itemprop=aggregateRating] > span[itemprop=ratingCount]',
+          rating: 'span[itemprop=aggregateRating] > meta[itemprop=ratingValue] @content',
+          bestRating: 'span[itemprop=aggregateRating] > meta[itemprop=bestRating] @content',
+          worstRating: 'span[itemprop=aggregateRating] > meta[itemprop=worstRating] @content',
+        },
         review: {
-          reviewId: 'span.ratings > span @doctordetail',
+          reviewId: 'span.ratings > span > div.rating @id',
           author: 'span[itemprop=author] > meta[itemprop=name] @content',
           rating: 'div[itemprop=reviewRating] > meta[itemprop=ratingValue] @content',
           ratingBreakdown: x('.rating-number', [{
@@ -52,29 +54,13 @@ class Scraper {
         }
       };
 
-      x(scrapeUrl, fields)((result) => {
-        console.log(result);
+      x(scrapeUrl, fields)((err, result) => {
+        if (err) {
+          return reject(err);
+        }
         return resolve(result);
       });
     });
-  }
-
-  toDoctor(scrapeResults) {
-    return {
-      name: scrapeResults.name,
-      reviewCount: scrapeResults.reviewCount,
-      rating: scrapeResults.rating,
-      bestRating: scrapeResults.bestRating,
-      worstRating: scrapeResults.worstRating
-    };
-  }
-
-  toReview(scrapeResults) {
-    const review = scrapeResults.review;
-    Object.assign(review, {
-      ratingBreakdown: scrapeResults.review.ratingBreakdown.slice(0, 4)
-    });
-    return review;
   }
 }
 

@@ -27,5 +27,7 @@ export function stop() {
 
 export default {
   start,
-  stop
+  stop,
+  single: service.single,
+  all: service.all
 };

@@ -1,6 +1,6 @@
 import Promise from 'bluebird';
 
-import { Doctor } from '../database';
+import { Doctor, Review } from '../database';
 import { emit } from '../sockets';
 import Scraper from './scraper';
 
@@ -16,22 +16,36 @@ export class ScraperService {
     return scraper.scrape().fromDoctor(doctor)
       .then((result) => {
         // Check to make sure the scraped id was valid
-        if (!result.name) {
+        if (!result.doctor.name) {
           return false;
         }
 
         // Update the doctor data in the database
-        doctor.update(scraper.toDoctor(result));
+        doctor.update(result.doctor);
 
         // Get the latest review and compare with results
-        const scrapedReview = scraper.toReview(result);
-        doctor.getReview().then((oldReview) => {
-          // First time scraping the review
-          if (!oldReview.reviewId) {
-            doctor.setReview(scrapedReview);
-          } else if (oldReview.reviewId !== scrapedReview.reviewId) {
-            doctor.setReview(scrapedReview);
-            // Email Admin + all users in doctor:emailList
+        const scrapedReview = result.review;
+        return doctor.getReview().then((oldReview) => {
+          let isNewer = false;
+          if (oldReview) {
+            isNewer = oldReview.reviewId !== scrapedReview.reviewId;
+          }
+
+          if (!oldReview || isNewer) {
+            return Review().create(scrapedReview)
+              .then((reviewInstance) => doctor.setReview(reviewInstance))
+              .then(() => {
+                emit('scrape:finish', doctor);
+                if (isNewer) {
+                  // TODO Email Admin + all users in doctor:emailList
+                }
+                return doctor;
+              })
+              .catch((err) => {
+                console.error('Setting doctors review failed', err);
+                emit('scrape:failed', err);
+                throw err;
+              });
           }
           emit('scrape:finish', doctor);
           return doctor;
@@ -39,7 +53,7 @@ export class ScraperService {
       })
       .catch((err) => {
         console.error(`Failed to scrape doctor ${doctor.siteId}`, err);
-        return emit('scrape:failed', doctor);
+        return emit('scrape:failed', err);
       });
   }
 
