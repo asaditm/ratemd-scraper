@@ -10,7 +10,7 @@ export class ScraperService {
    * @param object doctor Doctor object to scrape
    */
   single(doctor) {
-    emit('scrape:start', doctor.id); // TODO change back to doctor
+    emit('scrape:start', doctor.name); // TODO change back to doctor
 
     const scraper = new Scraper();
     return scraper.fullScrape().fromDoctor(doctor)
@@ -44,13 +44,14 @@ export class ScraperService {
               emit('scrape:finish', Object.assign(doctor, { review: result.review }).id);
               if (isNewer) {
                 // TODO Email Admin + all users in doctor:emailList
+                emit('scrape:new', `New review for ${doctor.name}`);
               }
               return doctor;
             });
           }
 
           // Nothing to do, finish up
-          emit('scrape:finish', Object.assign(doctor, { review: oldReview }).id); // TODO change back to doctor
+          emit('scrape:finish', Object.assign(doctor, { review: oldReview }).name); // TODO change back to doctor
           return doctor;
         });
       })
