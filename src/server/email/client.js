@@ -87,7 +87,8 @@ export class EmailClient {
 
       // Send the email
       if (mail.built) {
-        this.mailgun.messages().sendMime(mail, callback);
+        const mimeMail = Object.assign(mail, { message: mail.message.toString('ascii') });
+        this.mailgun.messages().sendMime(mimeMail, callback);
       } else {
         this.mailgun.messages().send(mail, callback);
       }

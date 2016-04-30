@@ -21,8 +21,7 @@ import EmailClient from './client';
  * }
  */
 export function sendNewReview(doctor) {
-  const globalRecpient = 'jordondehoog@gmail.com'; // Grab from config object
-  const addresses = [globalRecpient].concat(doctor.emailList);
+  const addresses = [].concat(doctor.emailList);
 
   let successCount = 0;
   const onSuccess = (success) => successCount++;
@@ -35,6 +34,7 @@ export function sendNewReview(doctor) {
         const mail = Object.assign(builtMail, { to: address });
         this.send(mail).then(onSuccess);
       }
+      return successCount;
     })
     .catch((err) => {
       console.error('Error sending new review alert', err);

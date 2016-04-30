@@ -13,6 +13,14 @@ const scraper = new ScraperService();
 
 let instance, doctor, review = {};
 
+function addDefaultEmailBeforeCreate(user, options) {
+  if (!user.emailList) {
+    user.emailList = [];
+  }
+  // TODO replace with email from config file
+  user.emailList.push('admin@email.account');
+}
+
 function scrapeOnCreate(createdDoctor) {
   console.log(`Scraping newly created doctor [${createdDoctor.name}]`);
   scraper.single(createdDoctor)
@@ -42,9 +50,11 @@ function init(config) {
   doctor.hasOne(review, { onDelete: 'cascade', hooks: true });
 
   // Register model hooks
+  doctor.beforeCreate('addDefaultEmail', addDefaultEmailBeforeCreate);
   doctor.afterCreate('createScrape', scrapeOnCreate);
 
   // Create the tables in the database
+  // TODO grab from config object
   if (force) {
     console.log('Forcing the creation of tables');
   }

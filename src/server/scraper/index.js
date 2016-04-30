@@ -3,7 +3,7 @@ import ScraperService from './service';
 const service = new ScraperService();
 
 const MINUTE_IN_MILLIS = 60000;
-const DEFAULT_INTERVAL = 5 * MINUTE_IN_MILLIS;
+const DEFAULT_INTERVAL = 5;
 
 let serviceHandler = null;
 
@@ -11,8 +11,8 @@ export function start(interval = DEFAULT_INTERVAL) {
   if (serviceHandler) {
     return;
   }
-  console.log(`Scheduling scraper for every ${interval / MINUTE_IN_MILLIS} minutes`);
-  serviceHandler = setInterval(() => service.all(), interval);
+  console.log(`Scheduling scraper for every ${interval} minutes`);
+  serviceHandler = setInterval(() => service.all(), interval * MINUTE_IN_MILLIS);
 
   return service.all();
 }
