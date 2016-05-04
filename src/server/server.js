@@ -5,10 +5,6 @@
  * 'static/`, compiled angular files should be located in 'static/dist`.
  * Ensure that they have been compiled by running `npm build`
  */
-
-import { install } from 'source-map-support';
-install();
-
 import { join } from 'path';
 import * as http from 'http';
 import * as fs from 'fs';
@@ -24,6 +20,7 @@ import cookieParser from 'cookie-parser';
 import errorHandler from 'errorhandler';
 import helmet from 'helmet';
 
+import configuration from './config';
 import database from './database';
 import routes from './routes';
 import scraper from './scraper';
@@ -32,70 +29,44 @@ const pretty = new PrettyError();
 const app = new Express();
 const server = new http.Server(app);
 
-/**
- * Setup config object
- */
-const environment = {
-  development: {
-    isProduction: false
-  },
-  production: {
-    isProduction: true
+configuration.all(true).then((config) => {
+  // Setup the server
+  app.use(compression());
+  app.use(bodyParser.urlencoded({ extended: false }));
+  app.use(bodyParser.json());
+  app.use(methodOverride());
+  app.use(cookieParser());
+  app.use(helmet());
+  app.use(Express.static(config.paths.static));
+  app.use(favicon(join(config.paths.static, 'favicon.ico')));
+
+  // Setup middleware
+  if (config.env === 'production') {
+    app.use(morgan('short', {
+      skip: (req, res) => res.statusCode < 400
+    }));
+  } else {
+    app.use(morgan('dev'));
+    app.use(errorHandler());
   }
-}[process.env.NODE_ENV || 'development'];
 
-const config = Object.assign({
-  port: process.env.PORT,
-  dir: {
-    static: join(__dirname, '../..', 'static')
-  }
-}, environment);
-
-/**
- * Setup the application
- */
-app.use(compression());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
-app.use(methodOverride());
-app.use(cookieParser());
-app.use(helmet());
-app.use(Express.static(config.dir.static));
-app.use(favicon(join(config.dir.static, 'favicon.ico')));
-
-if (config.isProduction) {
-  app.use(morgan('short', {
-    skip: (req, res) => res.statusCode < 400
-  }));
-} else {
-  app.use(morgan('dev'));
-  app.use(errorHandler());
-}
-
-/**
- * Setup the database then routes
- */
-database
-  .init(config)
-  .then(() => routes.register(app, config))
-  .then(() => scraper.start())
-  .catch((err) => {
-    console.error('Error intializing server');
-    throw err;
-  });
-
-/**
- * Start the server
- */
-if (config.port) {
-  server.listen(config.port, (err) => {
-    if (err) {
-      console.info('==>    ERROR: Error listening on port :%s', config.port);
-      console.error(pretty.render(err));
-    } else {
-      console.info('\n==>     ✅ OK %s is running on http://localhost:%s.', config.title, config.port);
-    }
-  });
-} else {
-  console.error('==>    ERROR: No PORT environment variable was specified');
-}
+  // Setup the database then routes
+  database
+    .init(config)
+    .then(() => routes.register(app, config))
+    .then(() => scraper.start(config.scraper.interval))
+    .then(() => {
+      server.listen(config.port, (err) => {
+        if (err) {
+          console.info(`==>    ERROR: Error listening on port :${config.port}`);
+          throw err;
+        } else {
+          console.info(`\n==>     ✅ OK ${config.title} is running on http://localhost:${config.port}.`);
+        }
+      });
+    })
+    .catch((err) => {
+      console.error('Error intializing server');
+      throw err;
+    });
+});

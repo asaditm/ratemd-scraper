@@ -1,23 +1,31 @@
-// functions:
-
-// Load
-// All the config files (prod, dev, def, user, etc)
-
-// Save
-// The user config to file
-
-// Get
-// All or a specific value
-import mkdirp from 'mkdirp';
-
-import defaults from './defaults';
+import defaultConfig from './defaults';
+import User from './user';
 import { development, production } from './environments';
 
-export function get() {
-  const environment = defaults.env === 'production' ? production : development;
+let fullConfig = {};
 
-  // TODO include User config?
-  return Object.assign(defaults, environment);
+export function defaults() {
+  const environment = defaultConfig.env === 'production' ? production : development;
+  return Object.assign(defaultConfig, environment);
 }
 
-export default { get };
+/**
+ * Merge the main config files, and load the user config from data dir
+ *
+ * @param boolean reload  Force a reload of the entire config
+ * @returns Promise<object>
+ */
+export function all(reload = false) {
+  if (fullConfig && reload) {
+    return Promise.resolve(fullConfig);
+  }
+
+  const userConfig = new User();
+  return userConfig.read()
+    .then((err, config = {}) => {
+      fullConfig = Object.assign(defaults(), config);
+      return fullConfig;
+    });
+}
+
+export default { all, defaults };

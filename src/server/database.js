@@ -37,9 +37,8 @@ function scrapeOnCreate(createdDoctor) {
 function init(config) {
   const options = {
     dialect: 'sqlite',
-    storage: path.join(config.dir.static, 'data', 'database.sqlite')
+    storage: path.join(config.paths.data, 'database.sqlite')
   };
-  mkdirp.sync(path.dirname(options.storage));
 
   // Create instances of database and table
   instance = new Sequelize('database', 'admin', 'admin', options);

@@ -2,8 +2,9 @@ import Mailgun from 'mailgun-js';
 import mailComposer from 'mailcomposer';
 
 export class EmailClient {
-  constructor(apiKey, domain) {
+  constructor({ apiKey, domain, from }) {
     this.mailgun = new Mailgun({ apiKey, domain });
+    this.from = from;
   }
 
   /**
@@ -24,7 +25,7 @@ export class EmailClient {
   build(options, sendImmediately = false) {
     return new Promise((resolve, reject) => {
       if (!options.from) {
-        // Grab sender from the global config TODO
+        options.from = this.from;
       }
 
       mailComposer(options).build((err, message) => {

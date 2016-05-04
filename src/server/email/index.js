@@ -1,14 +1,4 @@
-// Here is where the individual email functions will go
-
-// And will pass them to the email client
-
-// ie:  on new review
-// ie: forgot password
-// ie: on error?
-
-// deal with global config here, let email client be seperate.
-// -> like api key, domain, default from, etc.
-
+import Config from './config';
 import EmailClient from './client';
 
 /**
@@ -26,10 +16,9 @@ export function sendNewReview(doctor) {
   let successCount = 0;
   const onSuccess = (success) => successCount++;
 
-  const mailOptions = {};
-
-  return this.build(mailOptions)
-    .then((builtMail) => {
+  return Config.all(true).then((config) => {
+    const emailClient = new EmailClient(config.email);
+    return emailClient.build(config.email).then((builtMail) => {
       for (const address of addresses) {
         const mail = Object.assign(builtMail, { to: address });
         this.send(mail).then(onSuccess);
@@ -40,6 +29,7 @@ export function sendNewReview(doctor) {
       console.error('Error sending new review alert', err);
       throw err; // TODO remove?
     });
+  });
 }
 
 export default {

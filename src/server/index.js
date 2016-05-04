@@ -1,3 +1,14 @@
+import { install } from 'source-map-support';
+install();
+
+import mkdirp from 'mkdirp-promise';
+import PrettyError from 'pretty-error';
+
+import defaults from './config/defaults';
+import confg from './config';
+
+const pretty = new PrettyError();
+
 /**
  * Called when the node process is about to exit
  *
@@ -40,8 +51,11 @@ process.on('uncaughtException', onUncaughtException);
  * catch and throw any errors
  */
 try {
-  require('./server');
+  // TODO init logger
+  mkdirp(defaults.paths.data)
+    .then(() => require('./server'));
 } catch (err) {
   console.error('==>    ERROR: Error has been encountered in the server script');
+  console.error(pretty.render(err));
   throw err;
 }

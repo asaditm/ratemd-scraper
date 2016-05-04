@@ -19,8 +19,7 @@ function register(app, config) {
   app.route('/')
   .get((req, res) => {
     res.setHeader('Content-Type', 'text/html');
-    createReadStream(join(config.dir.static, 'client', 'index.html'))
-      .pipe(res);
+    createReadStream(join(config.paths.static, 'client', 'index.html')).pipe(res);
   });
 
   Promise.resolve();
