@@ -4,11 +4,15 @@ import { EventEmitter } from 'events';
 import mkdirp from 'mkdirp';
 import Sequelize from 'sequelize';
 
+import logger from './logger';
 import { Doctor as modelDoctor } from './api/doctors/doctor.model';
 import { Review as modelReview } from './api/reviews/review.model';
 import ScraperService from './scraper/service';
 
+// TODO pull from config
 const force = process.env.FORCE_CREATE;
+
+const log = logger.create('Database');
 const scraper = new ScraperService();
 
 let instance, doctor, review = {};
@@ -37,7 +41,8 @@ function scrapeOnCreate(createdDoctor) {
 function init(config) {
   const options = {
     dialect: 'sqlite',
-    storage: path.join(config.paths.data, 'database.sqlite')
+    storage: path.join(config.paths.data, 'database.sqlite'),
+    logging: (sql) => log.debug('[SQL]\n', sql)
   };
 
   // Create instances of database and table

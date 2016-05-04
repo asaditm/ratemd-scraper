@@ -21,6 +21,7 @@ import errorHandler from 'errorhandler';
 import helmet from 'helmet';
 
 import configuration from './config';
+import logger from './logger';
 import database from './database';
 import routes from './routes';
 import scraper from './scraper';
@@ -51,23 +52,28 @@ configuration.all(true).then((config) => {
   }
 
   // Setup the database then routes
-  database
-    .init(config)
-    .then(() => routes.register(app, config))
-    .then(() => {
-      server.listen(config.port, (err) => {
-        if (err) {
-          console.info(`==>    ERROR: Error listening on port :${config.port}`);
-          throw err;
-        } else {
-          console.info(`\n==>     ✅ OK ${config.title} is running on http://localhost:${config.port}.`);
-          return Promise.resolve();
-        }
+  logger.init(config).then(() => {
+    const log = logger.create('Server');
+    log.info('Initializing server components')
+       .debug('Using config', config);
+
+    database.init(config)
+      .then(() => routes.register(app, config))
+      .then(() => {
+        server.listen(config.port, (err) => {
+          if (err) {
+            log.error(`Error listening on port :${config.port}`);
+            throw err;
+          } else {
+            log.info(`✅ OK ${config.title} is running on http://localhost:${config.port}.`);
+            return Promise.resolve();
+          }
+        });
+      })
+      .then(() => scraper.start(config.scraper.interval))
+      .catch((err) => {
+        log.error('Error initializing server', err);
+        throw err;
       });
-    })
-    .then(() => scraper.start(config.scraper.interval))
-    .catch((err) => {
-      console.error('Error intializing server');
-      throw err;
-    });
+  });
 });
