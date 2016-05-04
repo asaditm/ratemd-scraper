@@ -3,7 +3,7 @@ export const development = {
     username: 'admin',
     password: null,
     filename: 'database_dev.sqlite',
-    forceCreation: process.env.FORCE_CREATE || false
+    force: process.env.FORCE_CREATE || false
   },
 
   log: {

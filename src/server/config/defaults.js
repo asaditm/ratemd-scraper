@@ -22,7 +22,7 @@ export default {
     username: 'admin',
     password: null,
     filename: 'database.sqlite',
-    forceCreation: false
+    force: false
   },
 
   log: {
@@ -44,6 +44,7 @@ export default {
   email: {
     domain: 'your.domain.ca',
     apiKey: 'mailgunApiKey',
+    defaultRecipient: 'admin@admin.com',
     from: 'Review Alert <noreply@admin.com>',
     subject: 'New review was posted',
     body: 'This is a sample email',

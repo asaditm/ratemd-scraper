@@ -9,20 +9,17 @@ import { Doctor as modelDoctor } from './api/doctors/doctor.model';
 import { Review as modelReview } from './api/reviews/review.model';
 import ScraperService from './scraper/service';
 
-// TODO pull from config
-const force = process.env.FORCE_CREATE;
-
 const log = logger.create('Database');
 const scraper = new ScraperService();
 
+const _config = {};
 let instance, doctor, review = {};
 
 function addDefaultEmailBeforeCreate(user, options) {
   if (!user.emailList) {
     user.emailList = [];
   }
-  // TODO replace with email from config file
-  user.emailList.push('admin@email.account');
+  user.emailList.push(_config.email.defaultRecipient || '');
 }
 
 function scrapeOnCreate(createdDoctor) {
@@ -39,6 +36,7 @@ function scrapeOnCreate(createdDoctor) {
 }
 
 function init(config) {
+  Object.assign(_config, config);
   const options = {
     dialect: 'sqlite',
     storage: path.join(config.paths.data, 'database.sqlite'),
@@ -57,14 +55,17 @@ function init(config) {
   doctor.beforeCreate('addDefaultEmail', addDefaultEmailBeforeCreate);
   doctor.afterCreate('createScrape', scrapeOnCreate);
 
-  // Create the tables in the database
-  // TODO grab from config object
-  if (force) {
-    console.log('Forcing the creation of tables');
+  if (config.database.force) {
+    log.info('Forcing the creation of tables');
   }
 
-  return doctor.sync({ force })
-    .then(() => review.sync({ force }));
+  const tables = [doctor, review];
+  const promises = [];
+  for (const table of tables) {
+    promises.push(table.sync({ force: config.database.force }));
+  }
+
+  return Promise.all(promises);
 }
 
 export function sequelize() {
@@ -79,7 +80,7 @@ export function Review() {
   return review;
 }
 
-export default { init };
+export default { init, sequelize, Doctor, Review };
 
 
 // Add socket events?
