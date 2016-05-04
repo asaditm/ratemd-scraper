@@ -27,6 +27,7 @@ export default {
 
   log: {
     filename: 'server.log',
+    maxSize: 50,
     level: 'INFO',
     short: false,
     default: 'INFO'

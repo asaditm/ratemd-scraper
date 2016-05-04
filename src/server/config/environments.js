@@ -8,7 +8,7 @@ export const development = {
 
   log: {
     filename: 'server_dev.log',
-    level: 'VERBOSE'
+    level: 'DEBUG'
   }
 };
 
