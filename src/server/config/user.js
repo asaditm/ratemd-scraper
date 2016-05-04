@@ -9,7 +9,7 @@ import defaults from './defaults';
 const fsP = bluebird.promisifyAll(fs);
 const configPath = join(defaults.paths.data, 'user.config.json');
 
-const defaultUserConfig = {
+export const defaultUserConfig = {
   port: '',
   secrets: {
     session: ''
@@ -44,13 +44,16 @@ class UserConfig {
   update(config) {
     // TODO refactor?
     return new Promise((resolve, reject) => {
+      console.log('Saving config: ', config);
       jsonfile.writeFile(configPath, config, { spaces: 2 }, (err) => {
         if (err) {
           console.error('Saving config failed', err);
-          return false;
+          return resolve(err);
         }
-        return true;
+        return resolve(null);
       });
     });
   }
 }
+
+export default UserConfig;
