@@ -54,7 +54,6 @@ configuration.all(true).then((config) => {
   database
     .init(config)
     .then(() => routes.register(app, config))
-    .then(() => scraper.start(config.scraper.interval))
     .then(() => {
       server.listen(config.port, (err) => {
         if (err) {
@@ -62,9 +61,11 @@ configuration.all(true).then((config) => {
           throw err;
         } else {
           console.info(`\n==>     ✅ OK ${config.title} is running on http://localhost:${config.port}.`);
+          return Promise.resolve();
         }
       });
     })
+    .then(() => scraper.start(config.scraper.interval))
     .catch((err) => {
       console.error('Error intializing server');
       throw err;
