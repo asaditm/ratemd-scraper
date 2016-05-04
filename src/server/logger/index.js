@@ -36,4 +36,4 @@ export function create(tag, config) {
   return new Console(tag, config || loggerConfig);
 }
 
-export default { init, create };
+export default { init, create, Console };

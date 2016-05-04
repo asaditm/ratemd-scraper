@@ -3,6 +3,9 @@ import Promise from 'bluebird';
 import { Doctor, Review } from '../database';
 import { emit } from '../sockets';
 import Scraper from './scraper';
+import logger from '../logger';
+
+const log = logger.create('Scraper:Service');
 
 export class ScraperService {
   /**
@@ -10,6 +13,7 @@ export class ScraperService {
    * @param object doctor Doctor object to scrape
    */
   single(doctor) {
+    log.verbose(`Starting scrape for [${doctor.name}]`);
     emit('scrape:start', doctor.name); // TODO change back to doctor
 
     const scraper = new Scraper();
@@ -28,6 +32,8 @@ export class ScraperService {
           let isNewer = false;
           if (oldReview) {
             isNewer = oldReview.reviewId !== result.review.reviewId;
+          } else {
+            log.verbose(`Completed initial scraping for new doctor [${doctor.name}]`);
           }
 
           let query;
@@ -36,15 +42,17 @@ export class ScraperService {
               .then((reviewInstance) => doctor.setReview(reviewInstance));
           } else if (isNewer) {
             query = oldReview.update(result.review);
+            log.verbose(`[${doctor.name}] has a new review [${result.review.reviewId}]`);
           }
 
           // If there is no review, or a newer review emit finish event
           if (query) {
             return query.then(() => {
               emit('scrape:finish', Object.assign(doctor, { review: result.review }).id);
+              log.verbose(`Scrape finished for [${doctor.name}]`);
               if (isNewer) {
                 // TODO Email Admin + all users in doctor:emailList
-                emit('scrape:new', `New review for ${doctor.name}`);
+                emit('scrape:new', `New review for [${doctor.name}]`);
               }
               return doctor;
             });
@@ -52,11 +60,12 @@ export class ScraperService {
 
           // Nothing to do, finish up
           emit('scrape:finish', Object.assign(doctor, { review: oldReview }).name); // TODO change back to doctor
+          log.verbose(`Scrape finished for [${doctor.name}]`);
           return doctor;
         });
       })
       .catch((err) => {
-        console.error(`Failed to scrape doctor [${doctor.id}]`, err);
+        log.warning(`Failed to scrape doctor [${doctor.id}]`, err);
         return emit('scrape:failed', Object.assign(err, { doctor: { id: doctor.id } }));
       });
   }
@@ -68,23 +77,23 @@ export class ScraperService {
     return Doctor().findAll()
       .then((doctors) => {
         if (doctors.length === 0) {
-          console.log('[ScraperService] Nothing to do');
+          log.info('No doctors to scrape');
           return;
         }
 
+        log.info(`Scraping [${doctors.length}] doctors.`);
         emit('scrapeAll:start');
-        console.log(`Scraping [${doctors.length}] doctors.`);
         const scrapePromises = [];
         for (const doctor of doctors) {
           scrapePromises.push(this.single(doctor));
         }
 
         return Promise.all(scrapePromises).then(() => {
-          console.log('Scraping for all doctors finished');
           emit('scrapeAll:finish');
+          log.info('Scraping for all doctors finished');
         });
       })
-      .catch((err) => console.error('Error finding all doctors', err));
+      .catch((err) => log.error('Error finding all doctors', err));
   }
 }
 

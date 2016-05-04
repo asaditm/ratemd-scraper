@@ -1,6 +1,8 @@
 import ScraperService from './service';
+import logger from '../logger';
 
 const service = new ScraperService();
+const log = logger.create('Scraper');
 
 const MINUTE_IN_MILLIS = 60000;
 const DEFAULT_INTERVAL = 5;
@@ -11,7 +13,7 @@ export function start(interval = DEFAULT_INTERVAL) {
   if (serviceHandler) {
     return;
   }
-  console.log(`Scheduling scraper for every ${interval} minutes`);
+  log.info(`Scheduling scraper for every ${interval} minutes`);
   serviceHandler = setInterval(() => service.all(), interval * MINUTE_IN_MILLIS);
 
   return service.all();
@@ -19,7 +21,7 @@ export function start(interval = DEFAULT_INTERVAL) {
 
 export function stop() {
   if (serviceHandler) {
-    console.log('Canceling scrapper service');
+    log.info('Stopping the scrapper service');
     clearInterval(serviceHandler);
     serviceHandler = null;
   }

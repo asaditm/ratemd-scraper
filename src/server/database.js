@@ -23,16 +23,16 @@ function addDefaultEmailBeforeCreate(user, options) {
 }
 
 function scrapeOnCreate(createdDoctor) {
-  console.log(`Scraping newly created doctor [${createdDoctor.name}]`);
+  log.info(`Scraping newly created doctor [${createdDoctor.name}]`);
   scraper.single(createdDoctor)
     .then((result) => {
       if (!result) {
-        console.log(`Scraping for [${createdDoctor.name}] failed, removing from database`);
+        log.error(`Scraping for [${createdDoctor.name}] failed, removing from database`);
         return createdDoctor.destroy();
       }
-      console.log(`Scraping for newly created doctor [${result.name}] was a success`);
+      log.info(`New doctor [${result.name}] was scraped`);
     })
-    .catch((err) => console.error('Error scraping on create', err));
+    .catch((err) => log.error('Error scraping on create', err));
 }
 
 function init(config) {

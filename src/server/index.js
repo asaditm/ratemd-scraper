@@ -55,7 +55,10 @@ try {
   const dataDir = config.defaults().paths.data;
   mkdirp(dataDir)
     .then(() => {
-      log.info(`Using [${dataDir}] as data folder`);
+      const packageInfo = require('../../package.json');
+      log.info(`Application name: [${packageInfo.name}]`)
+         .info(`Version Number  : [${packageInfo.version}]`)
+         .info(`Using [${dataDir}] as data folder`);
       require('./server');
     });
 } catch (err) {
