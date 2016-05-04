@@ -25,7 +25,7 @@ export default class Console extends Base {
         const chalkMessage = colors.message(` ${item.message}`) + newLine;
         console.log(`${timestamp}${chalkHeader}${chalkMessage}`, item.data);
       }
-      logToFile(item);
+      logToFile(this.tag, item);
     }
     return this;
   }

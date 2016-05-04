@@ -16,9 +16,9 @@ export function init(config) {
   wasInit = true;
 }
 
-export function log(item) {
+export function log(tag, item) {
   if (wasInit) {
-    winston.log(item.level.toLowerCase(), item.message, item.data);
+    winston.log(item.level.toLowerCase(), item.message, Object.assign(item.data, { tag }));
   }
   return wasInit;
 }
