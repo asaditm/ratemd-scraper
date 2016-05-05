@@ -47,7 +47,6 @@ export default {
     defaultRecipient: 'admin@admin.com',
     from: 'Review Alert <noreply@admin.com>',
     subject: 'New review was posted',
-    body: 'This is a sample email',
     html: '<b>Sample test</b>'
   }
 

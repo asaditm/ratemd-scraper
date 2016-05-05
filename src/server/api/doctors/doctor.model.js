@@ -39,6 +39,10 @@ export const Doctor = {
       set: function (value) {
         this.setDataValue('emailList', JSON.stringify(value));
       }
+    },
+    emailDefaultUser: {
+      type: Sequelize.BOOLEAN,
+      defaultValue: true
     }
   }
 };

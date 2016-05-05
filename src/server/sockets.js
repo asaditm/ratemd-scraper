@@ -23,9 +23,8 @@ function onConnect(socket) {
   socket.on('disconnect', onDisconnect);
 }
 
-// TODO actually implement this...
 export function emit(event, data, callback = NOOP) {
-  log.verbose(`Emitting ${event}`).debug('Data:', data);
+  log.verbose(`Emitting ${event}`).silly('Data:', data);
   io.sockets.emit(event, data);
 }
 

@@ -6,6 +6,15 @@ export function register(router) {
     .route('/config')
     .get(ctrl.retrieve)
     .post(ctrl.update);
+
+  router
+    .route('/config/email/test')
+    .post(ctrl.emailTest)
+    .get(ctrl.emailTest);
+
+  router
+    .route('/config/email/:id')
+    .get(ctrl.emailReview);
 }
 
 export default { register };

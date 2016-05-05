@@ -51,7 +51,7 @@ process.on('uncaughtException', onUncaughtException);
 function onError(err) {
   log.error('Server encountered a problem', err);
   if (err.stack) {
-    log.error('Stack:\n', err.stack);
+    log.error('Stack:\n', pretty.render(err));
   }
   process.exit(1);
 }

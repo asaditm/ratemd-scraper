@@ -16,8 +16,8 @@ export function start(interval = previousInterval) {
     previousInterval = interval;
     log.info(`Scheduling scraper for every [${previousInterval}] minutes`);
     serviceHandler = setInterval(() => service.all(), previousInterval * MINUTE_IN_MILLIS);
-    service.all();
     emit('scraper:enable');
+    return service.all();
   }
   return serviceHandler;
 }

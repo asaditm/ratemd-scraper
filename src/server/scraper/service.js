@@ -93,7 +93,10 @@ export class ScraperService {
           log.info('Scraping for all doctors finished');
         });
       })
-      .catch((err) => log.error('Error finding all doctors', err));
+      .catch((err) => {
+        log.error('Error finding all doctors');
+        throw err;
+      });
   }
 }
 

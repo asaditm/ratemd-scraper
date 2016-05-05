@@ -1,10 +1,23 @@
 import Mailgun from 'mailgun-js';
 import mailComposer from 'mailcomposer';
 
+import logger from '../logger';
+const log = logger.create('Email:Client');
+
+function validationError(message, data) {
+  log.error(`Validation: [${message}]`, data);
+  return { message, reason: 'validation', data };
+}
+
 export class EmailClient {
   constructor({ apiKey, domain, from }) {
     this.mailgun = new Mailgun({ apiKey, domain });
+    this.credentials = { apiKey, domain };
     this.from = from;
+  }
+
+  buildAndSend(options) {
+    return this.build(options, true);
   }
 
   /**
@@ -14,8 +27,7 @@ export class EmailClient {
    *  from:     string (optional, will be pulled from config)
    *  to:       string
    *  subject:  string
-   *  body:     string (optional)
-   *  html:     string (optional)
+   *  html:     string
    * }
    * Either body or html is required
    *
@@ -28,16 +40,18 @@ export class EmailClient {
         options.from = this.from;
       }
 
-      mailComposer(options).build((err, message) => {
+      return mailComposer(options).build((err, message) => {
         if (err) {
           throw err;
         }
         const builtMail = { to: options.to, message, built: true };
         if (sendImmediately) {
           if (!builtMail.to) {
-            throw new Error('No recipient was provided');
+            throw validationError('No recipient was provided', { to: options.to });
           }
-          return this.send(builtMail);
+          return this.send(builtMail)
+            .then((body) => resolve(body))
+            .catch((error) => reject(error));
         }
         return resolve(builtMail);
       });
@@ -52,7 +66,7 @@ export class EmailClient {
    *  from:     string (optional, will be pulled from config)
    *  to:       string
    *  subject:  string
-   *  text:     string
+   *  html:     string
    * }
    *
    * @param object mail Either built mail or custom object
@@ -61,29 +75,33 @@ export class EmailClient {
     return new Promise((resolve, reject) => {
       // Validate mail object
       if (!mail) {
-        throw new Error('Mail object was not defined');
+        throw validationError('Mail object was not defined');
       } else if (!mail.to) {
-        throw new Error('No recipient was provided');
+        throw validationError('No recipient was provided', { to: mail.to });
+      }
+
+      if (!this.credentials.apiKey) {
+        throw validationError('No api key was specified');
+      } else if (!this.credentials.domain) {
+        throw validationError('No domain was specified');
       }
 
       // Validate built or custom mail object
-      if (mail.built && !mail.message) {
-        throw new Error('No message was provided');
-      } else {
+      if (!mail.built) {
         if (!mail.subject) {
-          throw new Error('No subject was provided');
-        } else if (!mail.text) {
-          throw new Error('No message was provided');
+          throw validationError('No subject was provided');
+        } else if (!mail.html) {
+          throw validationError('No message was provided');
         }
       }
 
       const callback = (err, body) => {
         if (err) {
-          console.error('Send error', err);
-          throw err;
+          log.error('Mailgun error', err);
+          return reject(err);
         }
-        // Emit that email sent successfully?
-        return resolve(true, body);
+        log.debug('Message was sent');
+        return resolve(body);
       };
 
       // Send the email
