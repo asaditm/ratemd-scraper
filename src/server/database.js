@@ -5,6 +5,7 @@ import mkdirp from 'mkdirp';
 import Sequelize from 'sequelize';
 
 import logger from './logger';
+import { emit } from './sockets';
 import { Doctor as modelDoctor } from './api/doctors/doctor.model';
 import { Review as modelReview } from './api/reviews/review.model';
 import ScraperService from './scraper/service';
@@ -35,6 +36,15 @@ function scrapeOnCreate(createdDoctor) {
     .catch((err) => log.error('Error scraping on create', err));
 }
 
+export function registerModelSocketEvents(model) {
+  const onSave = (document = {}) => emit(`${model.tableName}:save`, document);
+  const onDelete = (document = {}) => emit(`${model.tableName}:delete`, document);
+
+  model.afterCreate('create', onSave);
+  model.afterUpdate('update', onSave);
+  model.afterDelete('delete', onDelete);
+}
+
 function init(config) {
   Object.assign(_config, config);
   const options = {
@@ -62,6 +72,7 @@ function init(config) {
   const tables = [doctor, review];
   const promises = [];
   for (const table of tables) {
+    registerModelSocketEvents(table);
     promises.push(table.sync({ force: config.database.force }));
   }
 
@@ -81,23 +92,3 @@ export function Review() {
 }
 
 export default { init, sequelize, Doctor, Review };
-
-
-// Add socket events?
-// class DatabaseEvents extends EventEmitter {
-//   constructor() {
-//     super();
-//   }
-
-//   register(model) {
-//     model.afterBulkCreate('bulkCreate', (attr) => this.emit('bulkSave', attr));
-//     model.afterBulkUpdate('bulkUpdate', (attr) => this.emit('bulkSave', attr));
-//     model.afterBulkDelete('bulkDelete', (attr) => this.emit('bulkCreate', attr));
-
-//     model.afterCreate('create', (attr) => this.emit('save', attr));
-//     model.afterUpdate('update', (attr) => this.emit('save', attr));
-//     model.afterDelete('delete', (attr) => this.emit('delete', attr));
-
-//     return model;
-//   }
-// }

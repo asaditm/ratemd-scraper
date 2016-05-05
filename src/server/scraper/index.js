@@ -1,5 +1,6 @@
 import ScraperService from './service';
 import logger from '../logger';
+import { emit } from '../sockets';
 
 const service = new ScraperService();
 const log = logger.create('Scraper');
@@ -16,6 +17,7 @@ export function start(interval = previousInterval) {
     log.info(`Scheduling scraper for every [${previousInterval}] minutes`);
     serviceHandler = setInterval(() => service.all(), previousInterval * MINUTE_IN_MILLIS);
     service.all();
+    emit('scraper:enable');
   }
   return serviceHandler;
 }
@@ -25,6 +27,7 @@ export function stop() {
     log.info('Stopping the scrapper service');
     clearInterval(serviceHandler);
     serviceHandler = null;
+    emit('scraper:disable');
   }
   return serviceHandler;
 }

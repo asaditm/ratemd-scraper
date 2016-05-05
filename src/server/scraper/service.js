@@ -14,7 +14,7 @@ export class ScraperService {
    */
   single(doctor) {
     log.verbose(`Starting scrape for [${doctor.name}]`);
-    emit('scrape:start', doctor.name); // TODO change back to doctor
+    emit('scrape:start', doctor);
 
     const scraper = new Scraper();
     return scraper.fullScrape().fromDoctor(doctor)
@@ -59,7 +59,7 @@ export class ScraperService {
           }
 
           // Nothing to do, finish up
-          emit('scrape:finish', Object.assign(doctor, { review: oldReview }).name); // TODO change back to doctor
+          emit('scrape:finish', Object.assign(doctor, { review: oldReview }));
           log.verbose(`Scrape finished for [${doctor.name}]`);
           return doctor;
         });

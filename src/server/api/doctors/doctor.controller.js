@@ -53,7 +53,7 @@ class Controller {
     const id = req.params.id;
     log.info(`Deleting doctor with id of ${id}`);
     Doctor()
-      .destroy({ where: { id } })
+      .destroy({ where: { id }, individualHooks: true })
       .then((rowsDeleted) => res.status(200).json(rowsDeleted))
       .catch((err) => errorHandler(err, res));
   }

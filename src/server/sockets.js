@@ -1,7 +1,43 @@
+import SocketIO from 'socket.io';
+
 import logger from './logger';
+
+const io = new SocketIO();
 const log = logger.create('Sockets');
+const NOOP = () => { };
+
+let socketsConnected = 0;
+
+function onDisconnect(socket) {
+  socketsConnected--;
+  log.info(`[${socket.id}] has disconnected`)
+    .verbose(`There are [${socketsConnected}] sockets remaining`);
+}
+
+function onConnect(socket) {
+  // TODO Authenticate sockets
+  socketsConnected++;
+  log.info(`[${socket.id}] Connected`)
+    .verbose(`There are [${socketsConnected}] sockets connected`);
+
+  socket.on('disconnect', onDisconnect);
+}
 
 // TODO actually implement this...
-export function emit(event, data, callback) {
-  log.debug(`Emitting ${event}`, data);
+export function emit(event, data, callback = NOOP) {
+  log.verbose(`Emitting ${event}`).debug('Data:', data);
+  io.sockets.emit(event, data);
 }
+
+export function init(server) {
+  log.info('Initializing Socket.IO');
+
+  io.listen(server);
+  io.on('connection', onConnect);
+
+  // Add other socket files here
+
+  return Promise.resolve();
+}
+
+export default { init, io, emit };
