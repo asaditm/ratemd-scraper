@@ -1,14 +1,20 @@
 import { createHttpError } from '../../utils';
 import configLoader from '../../config';
+import scraper from '../../scraper';
+import DoctorController from '../doctors/doctor.controller';
+
+const doctor = new DoctorController();
 
 class Controller {
-  scrape(req, res) {
-    // TODO get doctor then trigger scrape
+  toggleService(req, res) {
+    const status = !!scraper.toggle();
+    return res.status(200).json({ status });
   }
 
-  toggleService(req, res) {
-    // Turn the scraper service on or off
+  scrape(req, res) {
+    return doctor.scrape(req, res);
   }
+
 }
 
 export default Controller;

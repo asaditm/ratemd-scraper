@@ -8,15 +8,16 @@ const MINUTE_IN_MILLIS = 60000;
 const DEFAULT_INTERVAL = 5;
 
 let serviceHandler = null;
+let previousInterval = DEFAULT_INTERVAL;
 
-export function start(interval = DEFAULT_INTERVAL) {
-  if (serviceHandler) {
-    return;
+export function start(interval = previousInterval) {
+  if (!serviceHandler) {
+    previousInterval = interval;
+    log.info(`Scheduling scraper for every [${previousInterval}] minutes`);
+    serviceHandler = setInterval(() => service.all(), previousInterval * MINUTE_IN_MILLIS);
+    service.all();
   }
-  log.info(`Scheduling scraper for every ${interval} minutes`);
-  serviceHandler = setInterval(() => service.all(), interval * MINUTE_IN_MILLIS);
-
-  return service.all();
+  return serviceHandler;
 }
 
 export function stop() {
@@ -25,11 +26,17 @@ export function stop() {
     clearInterval(serviceHandler);
     serviceHandler = null;
   }
+  return serviceHandler;
+}
+
+export function toggle() {
+  return serviceHandler ? stop() : start();
 }
 
 export default {
   start,
   stop,
+  toggle,
   single: service.single,
   all: service.all
 };
