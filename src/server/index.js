@@ -4,6 +4,7 @@ install();
 import mkdirp from 'mkdirp-promise';
 import PrettyError from 'pretty-error';
 
+import bootstrap from './server';
 import config from './config';
 import logger from './logger';
 
@@ -17,7 +18,7 @@ const log = logger.create('System', defaultConfig.log);
  * @param number code Return code of the process
  */
 function onExit(code) {
-  if (code >= 0) {
+  if (code > 0) {
     log.warning(`Exit: Non-zero exit code of ${code}`);
   } else {
     log.out('Exit: Application is exiting normally');
@@ -47,20 +48,24 @@ function onUncaughtException(err) {
 }
 process.on('uncaughtException', onUncaughtException);
 
+function onError(err) {
+  log.error('Server encountered a problem', err);
+  if (err.stack) {
+    log.error('Stack:\n', err.stack);
+  }
+  process.exit(1);
+}
+
 /**
  * Attempt to launch the server
  * catch and throw any errors
  */
-try {
-  const dataDir = config.defaults().paths.data;
-  mkdirp(dataDir)
-    .then(() => {
-      const packageInfo = require('../../package.json');
-      log.info(`Application name: [${packageInfo.name}]`)
-         .info(`Version Number  : [${packageInfo.version}]`)
-         .info(`Using [${dataDir}] as data folder`);
-      require('./server');
-    });
-} catch (err) {
-  log.error('Something terrible has happened!', pretty.render(err));
-}
+const dataDir = config.defaults().paths.data;
+mkdirp(dataDir)
+  .then(() => {
+    const packageInfo = require('../../package.json');
+    log.info(`Application name: [${packageInfo.name}]`)
+      .info(`Version Number  : [${packageInfo.version}]`)
+      .info(`Using [${dataDir}] as data folder`);
+    return bootstrap();
+  }).catch(onError);
