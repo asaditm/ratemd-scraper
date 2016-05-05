@@ -16,7 +16,7 @@ export function sendNewReview(doctor) {
   let successCount = 0;
   const onSuccess = (success) => successCount++;
 
-  return Config.all(true).then((config) => {
+  return Config.all().then((config) => {
     const emailClient = new EmailClient(config.email);
     return emailClient.build(config.email).then((builtMail) => {
       for (const address of addresses) {

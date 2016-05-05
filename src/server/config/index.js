@@ -17,7 +17,7 @@ export function defaults() {
  * @param boolean reload  Force a reload of the entire config
  * @returns Promise<object>
  */
-export function all(reload = false) {
+export function all(reload = true) {
   if (fullConfig && !reload) {
     return Promise.resolve(fullConfig);
   }

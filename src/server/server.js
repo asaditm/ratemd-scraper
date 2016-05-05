@@ -30,7 +30,7 @@ const pretty = new PrettyError();
 const app = new Express();
 const server = new http.Server(app);
 
-configuration.all(true).then((config) => {
+configuration.all().then((config) => {
   // Setup the server
   app.use(compression());
   app.use(bodyParser.urlencoded({ extended: false }));

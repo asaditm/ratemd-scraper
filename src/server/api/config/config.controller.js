@@ -3,7 +3,7 @@ import configLoader from '../../config';
 
 class Controller {
   retrieve(req, res) {
-    configLoader.all(true).then((config) => {
+    configLoader.all().then((config) => {
       if (!config) {
         return res.status(500).json(createHttpError('Unable to load config', config));
       }
