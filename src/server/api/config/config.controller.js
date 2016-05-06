@@ -8,7 +8,7 @@ function notFound(res) {
 }
 
 function errorHandler(err, res) {
-  return res.status(500).json(err);
+  return res.status(500).json({ status: 'error', message: 'Something went wrong', data: err });
 }
 
 class Controller {
@@ -46,16 +46,14 @@ class Controller {
         if (!doctor) {
           return notFound(res);
         }
-        return email.sendNewReview(doctor).then((sentCount) => {
-          if (sentCount === 0) {
-            return res.status(500).json({ status: 'error', message: 'No emails were sent' });
-          }
-          return res.status(200).json({
-            status: 'success',
-            message: `[${sentCount}] emails were sent`,
-            count: sentCount
-          });
-        });
+        return email.sendNewReview(doctor)
+          .then(({ successCount, failureCount }) =>
+            res.status(200).json({
+              status: successCount > 0 ? 'success' : 'error',
+              message: `[${successCount}] emails were sent with [${failureCount}] failures`,
+              result: { successCount, failureCount }
+            })
+        );
       }).catch((err) => errorHandler(err, res));
   }
 }
