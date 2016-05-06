@@ -13,7 +13,7 @@ import ScraperService from './scraper/service';
 const log = logger.create('Database');
 const scraper = new ScraperService();
 
-const _config = {};
+const globalConfig = {};
 let instance, doctor, review = {};
 
 function scrapeOnCreate(createdDoctor) {
@@ -39,7 +39,7 @@ export function registerModelSocketEvents(model) {
 }
 
 function init(config) {
-  Object.assign(_config, config);
+  Object.assign(globalConfig, config);
   const options = {
     dialect: 'sqlite',
     storage: path.join(config.paths.data, 'database.sqlite'),

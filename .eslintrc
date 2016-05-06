@@ -30,10 +30,12 @@
     "no-unused-expressions": 0,
     "new-cap": 0,
     "consistent-return": 0,
-    "eol-last": 1
+    "eol-last": 1,
+    "global-require": 0,
+    "react/jsx-first-prop-new-line": 0
   },
   "plugins": [
-    "react", "import"
+    "import"
   ],
   "settings": {
     "import/parser": "babel-eslint",
