@@ -1,5 +1,6 @@
 import Config from '../config';
 import EmailClient from './client';
+import { buildHTMLMessage } from './htmlTokens';
 import logger from '../logger';
 const log = logger.create('Email');
 
@@ -13,7 +14,6 @@ function getClient() {
 }
 
 // TODO Add socket events to email
-// TODO implement a way to add review info to the email.
 
 /**
  * Send an email to all users in the list to inform that a new review,
@@ -47,6 +47,8 @@ export function sendNewReview(doctor) {
     }
 
     // Build the MIME email object
+    const html = buildHTMLMessage(doctor, config.html);
+    Object.assign(config, { html });
     return client.build(config).then((builtMail) => {
       const sendPromises = [];
       log.verbose(`Sending [${doctor.name}] to [${addresses.length}] addresses`);
