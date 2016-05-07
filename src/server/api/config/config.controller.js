@@ -12,6 +12,13 @@ function errorHandler(err, res) {
 }
 
 class Controller {
+  defaults(req, res) {
+    return res.status(200).json({
+      message: 'default config',
+      data: configLoader.defaults()
+    });
+  }
+
   retrieve(req, res) {
     configLoader.all().then((config) => {
       if (!config) {
