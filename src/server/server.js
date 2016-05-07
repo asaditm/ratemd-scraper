@@ -64,7 +64,11 @@ export default function init() {
             }
           });
         })
-        .then(() => scraper.start(config.scraper.interval))
+        .then(() => {
+          if (config.scraper.enabled) {
+            return scraper.start(config.scraper.interval);
+          }
+        })
         .catch((err) => {
           log.error('Error initializing server', err);
           throw err;

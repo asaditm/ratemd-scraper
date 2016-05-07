@@ -38,6 +38,7 @@ export default {
   },
 
   scraper: {
+    enabled: true,
     interval: 5 // minutes
   },
 
