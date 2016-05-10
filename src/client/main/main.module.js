@@ -8,18 +8,17 @@
 import angular from 'angular';
 
 import core from '../core/core.module';
+import ui from '../ui/ui.module';
 
 import routes from './main.routes';
 import mainComponent from './main.component';
 
-const dependencies = [
-  core
-];
+const depends = [core, ui];
 
-export const module =
+export const main =
   angular
-    .module('app.main', dependencies)
+    .module('app.main', depends)
     .config(routes)
     .component('main', mainComponent);
 
-export default module.name;
+export default main.name;
