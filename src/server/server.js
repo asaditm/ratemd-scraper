@@ -68,6 +68,7 @@ export default function init() {
           if (config.scraper.enabled) {
             return scraper.start(config.scraper.interval);
           }
+          log.info('Not starting scraper, it is disabled');
         })
         .catch((err) => {
           log.error('Error initializing server', err);
