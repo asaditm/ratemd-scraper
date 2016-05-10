@@ -3,6 +3,7 @@
  * UI components.
  */
 import './main.scss';
+import buildAddDialog from '../ui/doctors/addDialog/add-dialog';
 
 /* eslint indent: 0 */
 const template = [
@@ -13,14 +14,30 @@ const template = [
         '<doctors-list></doctors-list>',
       '</md-card-content>',
     '</md-card>',
+    '<md-button class="md-fab md-fab-bottom-right" aria-label="Add" ng-click="$ctrl.showAddDoctor($event)">',
+      '<ng-md-icon icon="add"></ng-md-icon>',
+    '</md-button>',
   '</div>'
 ].join('');
+
+/** @ngInject */
+function controller($mdDialog) {
+  const showAdd = (event) => {
+    $mdDialog.show(buildAddDialog(event)).then((result) => {
+      console.log('main.ctrl: inside', result);
+    })
+    .catch(() => console.log('cancelled dialog'));
+  };
+
+  this.showAddDoctor = showAdd;
+}
 
 const mainComponent = {
   bindings: {
     name: '@'
   },
-  template
+  template,
+  controller
 };
 
 export default mainComponent;

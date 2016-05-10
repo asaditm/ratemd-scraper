@@ -1,8 +1,8 @@
 import coreModule from '../core/core.module';
 import doctorsModule from './doctors/doctors.module';
 
-import toolbarComponent from './toolbar/toolbar';
-import toolbarButtonComponent from './toolbar/button';
+import toolbarComponent from './toolbar/toolbar.component';
+import toolbarButtonComponent from './toolbar/button.component';
 
 
 const dependencies = [

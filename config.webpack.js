@@ -35,7 +35,7 @@ const commonPlugins = [
 const sharedConfig = {
   context: __dirname,
   entry: {
-    vendor: ['angular', 'angular-ui-router', 'angular-animate', 'angular-aria', 'angular-material'],
+    vendor: ['angular', 'angular-ui-router', 'angular-animate', 'angular-aria', 'angular-material', 'angular-messages'],
     app: entryJS
   },
   output: {

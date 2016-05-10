@@ -11,6 +11,7 @@ import './core.scss';
 
 // Core vendor libs
 import ngAnimate from 'angular-animate';
+import ngMessages from 'angular-messages';
 import ngUiRouter from 'angular-ui-router';
 import ngMaterial from 'angular-material';
 import ngIcons from 'angular-material-icons';
@@ -21,6 +22,7 @@ import materialTheme from './theme.config';
 const dependencies = [
  /* Angular modules */
   ngAnimate,
+  ngMessages,
   ngMaterial,
 
  /* Cross-app modules */
