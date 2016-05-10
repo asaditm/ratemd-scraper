@@ -1,0 +1,42 @@
+<md-dialog aria-label="Add a new doctor" flex="grow">
+  <md-dialog-content layout-padding>
+    <div class="md-headline">Add a new doctor</div>
+    <form name="doctorForm" layout-padding>
+      <div layout="column">
+        <md-input-container layout-fill>
+          <label>URL</label>
+          <input ng-model="doctor.url" name="url" type="url" required>
+          <div ng-messages="doctorForm.url.$error">
+            <div ng-message="url">It is not a valid url</div>
+            <div ng-message="required">A RateMDs URL is required</div>
+          </div>
+        </md-input-container>
+      </div>
+      <div layout="column">
+        <md-chips
+          ng-model="doctor.emailList"
+          md-separator-keys="keys"
+          placeholder="Emails to be notified"
+          secondary-placeholder="+ Email">
+        </md-chips>
+        <span class="inset"></span>
+        <span class="md-caption">
+          Type an email then hit <code>enter</code> or <code>tab</code> or the <code>comma</code> key.
+        </span>
+      </div>
+      <div layout="column">
+        <md-input-container>
+          <label aria-label="toggle notify self">Notify self</label>
+          <div class="inset"></div>
+          <md-switch ng-model="doctor.emailDefaultUser" aria-label="toggle notify self"></md-switch>
+          TODO Show the default email address here
+        </md-input-container>
+      </div>
+    </form>
+  </md-dialog-content>
+  <md-dialog-actions layout="row">
+    <span flex></span>
+    <md-button ng-click="cancel()">Cancel</md-button>
+    <md-button ng-click="submit(doctor)" class="md-primary" ng-disabled="doctorForm.$invalid">Save</md-button>
+  </md-dialog-actions>
+</md-dialog>
