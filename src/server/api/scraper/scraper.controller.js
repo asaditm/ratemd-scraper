@@ -4,11 +4,16 @@ import scraper from '../../scraper';
 import DoctorController from '../doctors/doctor.controller';
 
 const doctor = new DoctorController();
+const userConfig = new configLoader.User();
 
 class Controller {
   toggleService(req, res) {
-    const status = !!scraper.toggle();
-    return res.status(200).json({ status });
+    const enabled = !!scraper.toggle();
+    userConfig.update({ scraper: { enabled } })
+      .then(() => res.status(200).json({ enabled }))
+      .catch((err) =>
+        res.status(500).json(createHttpError('Error toggling scraper', err))
+      );
   }
 
   scrape(req, res) {
