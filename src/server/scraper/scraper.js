@@ -33,7 +33,7 @@ class Scraper {
       return Promise.resolve(result.name);
     })
     .catch((err) => {
-      throw createHttpError('Something went wrong', err);
+      throw err;
     });
   }
 

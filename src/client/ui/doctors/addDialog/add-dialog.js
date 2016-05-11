@@ -1,15 +1,5 @@
 import templateUrl from './add-dialog.tpl.html';
 
-function addDoctor(doctorsService, doctor) {
-  // TODO validate that the emailList actually contains emails
-
-  // Attempt to add doctor
-  // If link is invalid, display to user
-  // If it is okay, then display message telling user that data will be eventually loaded
-  console.log('inside addDoctor should not be undef=>', doctorsService);
-  console.log('add doctor: ', doctor);
-}
-
 /** @ngInject */
 function controller($scope, $mdDialog, $mdConstant, doctorsService) {
   // Form setup
@@ -29,7 +19,35 @@ function controller($scope, $mdDialog, $mdConstant, doctorsService) {
   // Dialog actions
   $scope.hide = () => $mdDialog.hide();
   $scope.cancel = () => $mdDialog.cancel();
-  $scope.submit = (doctor) => addDoctor(doctorsService, doctor);
+
+  function urlChanged(value) {
+    if ($scope.error) {
+      $scope.error = '';
+      $scope.doctorForm.url.$setValidity('scraper', true);
+    }
+  }
+
+  function addDoctor(doctor) {
+    $scope.loading = true;
+    $scope.error = '';
+
+    doctorsService.create(doctor).then((result) => {
+      $scope.loading = false;
+      $mdDialog.hide(result);
+    })
+    .catch((err) => {
+      $scope.loading = false;
+      $scope.error = err || 'Entered url is invalid';
+      $scope.doctorForm.url.$setValidity('scraper', false);
+    });
+    // TODO If it is okay, then display message telling user that data will be eventually loaded
+    // TODO a toast maybe?
+    console.log('inside addDoctor should not be undef=>', doctorsService);
+    console.log('add doctor: ', doctor);
+  }
+
+  $scope.urlChanged = urlChanged;
+  $scope.submit = (doctor) => addDoctor(doctor);
 }
 
 export function build(targetEvent) {

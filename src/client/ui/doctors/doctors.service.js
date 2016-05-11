@@ -19,6 +19,12 @@ class DoctorsApi {
 
   create(doctor) {
     // POST /doctors
+    return privates.get(this).$http.post('/api/doctors', doctor)
+      .then((response) => response.data)
+      .catch((err) => {
+        console.log('[DoctorsService] create() failed', err);
+        return privates.get(this).$q.reject(err.data.message);
+      });
   }
 
   update(doctor) {

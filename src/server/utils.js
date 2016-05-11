@@ -12,7 +12,7 @@ export function safelyParseJSON(json) {
 export function createHttpError(message, data) {
   return {
     status: 'error',
-    data,
+    error: data,
     message
   };
 }

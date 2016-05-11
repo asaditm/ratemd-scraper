@@ -1,12 +1,13 @@
-<md-dialog aria-label="Add a new doctor" flex="grow">
+<md-dialog aria-label="Add a new doctor" flex-gt-md="30">
   <md-dialog-content layout-padding>
     <div class="md-headline">Add a new doctor</div>
     <form name="doctorForm" layout-padding>
       <div layout="column">
         <md-input-container layout-fill>
           <label>URL</label>
-          <input ng-model="doctor.url" name="url" type="url" required>
+          <input ng-model="doctor.url" name="url" type="url" required ng-change="urlChanged()">
           <div ng-messages="doctorForm.url.$error">
+            <div ng-message="scraper">{{error}}</div>
             <div ng-message="url">It is not a valid url</div>
             <div ng-message="required">A RateMDs URL is required</div>
           </div>
@@ -37,6 +38,9 @@
   <md-dialog-actions layout="row">
     <span flex></span>
     <md-button ng-click="cancel()">Cancel</md-button>
-    <md-button ng-click="submit(doctor)" class="md-primary" ng-disabled="doctorForm.$invalid">Save</md-button>
+    <md-button ng-click="submit(doctor)" class="md-primary" ng-disabled="doctorForm.$invalid || loading" layout="row">
+      <span ng-hide="loading">Save</span>
+      <md-progress-circular ng-show="loading" md-mode="indeterminate"></md-progress-circular>
+    </md-button>
   </md-dialog-actions>
 </md-dialog>
