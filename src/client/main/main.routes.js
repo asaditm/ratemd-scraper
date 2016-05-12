@@ -6,9 +6,9 @@
 function getStates() {
   return [
     {
-      state: 'main',
+      state: 'home',
       config: {
-        name: 'main',
+        name: 'home',
         url: '/',
         template: '<main name="George"></main>'
       }

@@ -1,12 +1,14 @@
 /* eslint indent: 0 */
 const template = [
-  '<md-button class="md-icon-button" aria-label="{{$ctrl.aria || $ctrl.icon}}">',
-    '<ng-md-icon icon="{{$ctrl.icon}}" style="fill: white"></ng-md-icon>',
+  '<md-button class="md-icon-button" aria-label="{{$ctrl.aria || $ctrl.icon}}" ng-click="$ctrl.action()">',
+    '<ng-md-icon icon="{{$ctrl.icon}}" ui-sref="{{$ctrl.href}}" class="fill-white"></ng-md-icon>',
   '</md-button>',
 ].join('');
 
 const bindings = {
   icon: '@',
+  action: '&?',
+  href: '@?',
   aria: '@?'
 };
 

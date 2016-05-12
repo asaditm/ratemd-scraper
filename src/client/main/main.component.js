@@ -15,7 +15,7 @@ const template = [
       '</md-card-content>',
     '</md-card>',
     '<md-button class="md-fab md-fab-bottom-right" aria-label="Add" ng-click="$ctrl.showAddDoctor($event)">',
-      '<ng-md-icon icon="add"></ng-md-icon>',
+      '<ng-md-icon icon="add" class="fill-white"></ng-md-icon>',
     '</md-button>',
   '</div>'
 ].join('');

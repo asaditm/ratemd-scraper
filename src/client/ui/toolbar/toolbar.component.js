@@ -2,10 +2,10 @@
 const template = [
   '<md-toolbar>',
     '<div class="md-toolbar-tools">',
-      '<toolbar-button icon="home"></toolbar-button>',
+      '<toolbar-button icon="home" href="home"></toolbar-button>',
       '<h3>RateMDs Scraper</h3>',
       '<span flex></span>',
-      '<toolbar-button icon="settings"></toolbar-button>',
+      '<toolbar-button icon="settings" href="config"></toolbar-button>',
     '</div>',
   '</md-toolbar>',
 ].join('');

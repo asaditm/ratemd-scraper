@@ -10,5 +10,7 @@ md-card {
 }
 
 ng-md-icon {
-  fill: white;
+  &.fill-white {
+    fill: white;
+  }
 }

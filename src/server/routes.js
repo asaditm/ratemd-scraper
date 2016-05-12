@@ -21,7 +21,7 @@ function register(app, config) {
   app.use('/api', router);
 
   // Register the static routes
-  app.route('/')
+  app.route('/*')
   .get((req, res) => {
     res.setHeader('Content-Type', 'text/html');
     createReadStream(join(config.paths.static, 'client', 'index.html')).pipe(res);
