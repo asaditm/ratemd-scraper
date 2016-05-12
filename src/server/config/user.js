@@ -43,6 +43,7 @@ class UserConfig {
   }
 
   update(config) {
+    // TODO if scraper config is changed, then update the scraper service
     const log = logger.create('Config:User');
     return this.read().then((savedConfig) => {
       const merged = merge({}, savedConfig, config);

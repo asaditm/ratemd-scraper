@@ -18,6 +18,7 @@ let instance, doctor, review = {};
 
 function scrapeOnCreate(createdDoctor) {
   log.info(`Scraping newly created doctor [${createdDoctor.name}]`);
+  emit('doctors:create', createdDoctor);
   scraper.single(createdDoctor)
     .then((result) => {
       if (!result) {
@@ -27,15 +28,6 @@ function scrapeOnCreate(createdDoctor) {
       log.info(`New doctor [${result.name}] was scraped`);
     })
     .catch((err) => log.error('Error scraping on create', err));
-}
-
-export function registerModelSocketEvents(model) {
-  const onSave = (document = {}) => emit(`${model.tableName}:save`, document);
-  const onDelete = (document = {}) => emit(`${model.tableName}:delete`, document);
-
-  model.afterCreate('create', onSave);
-  model.afterUpdate('update', onSave);
-  model.afterDelete('delete', onDelete);
 }
 
 function init(config) {
@@ -55,7 +47,17 @@ function init(config) {
   doctor.hasOne(review, { onDelete: 'cascade', hooks: true });
 
   // Register model hooks
-  doctor.afterCreate('createScrape', scrapeOnCreate);
+  doctor.afterCreate('create', scrapeOnCreate);
+  doctor.afterDelete('delete', (document = {}) => emit('doctors:delete', document));
+  doctor.afterUpdate('update', (updated) => {
+    setTimeout(() =>
+      doctor.findById(updated.id, { include: [{ model: review }] })
+        .then(doc => emit('doctors:update', doc))
+    , 1000);
+  });
+
+  // TODO remove the delay, and have client listen for the scrape:finish event
+  // TODO and use lodash.merge to combine the doctor + review prop
 
   if (config.database.force) {
     log.warning('Dropping tables before creating').warning('Disable in [user.config.json:force]');
@@ -64,7 +66,6 @@ function init(config) {
   const tables = [doctor, review];
   const promises = [];
   for (const table of tables) {
-    registerModelSocketEvents(table);
     promises.push(table.sync({ force: config.database.force }));
   }
 
