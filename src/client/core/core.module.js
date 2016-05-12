@@ -15,9 +15,11 @@ import ngMessages from 'angular-messages';
 import ngUiRouter from 'angular-ui-router';
 import ngMaterial from 'angular-material';
 import ngIcons from 'angular-material-icons';
+import ngSocketIo from 'angular-socket-io';
 
 import config from './core.config';
 import materialTheme from './theme.config';
+import socketService from './socket.service';
 
 const dependencies = [
  /* Angular modules */
@@ -29,12 +31,14 @@ const dependencies = [
 
  /* 3rd party modules */
   ngUiRouter,
-  ngIcons
+  ngIcons,
+  'btford.socket-io'
 ];
 
 export const module =
   angular
     .module('app.core', dependencies)
+    .service('socketService', socketService)
     .config(config)
     .config(materialTheme);
 

@@ -11,17 +11,6 @@ const DEFAULT_INTERVAL = 5;
 let serviceHandler = null;
 let previousInterval = DEFAULT_INTERVAL;
 
-export function start(interval = previousInterval) {
-  if (!serviceHandler) {
-    previousInterval = interval;
-    log.info(`Scheduling scraper for every [${previousInterval}] minutes`);
-    serviceHandler = setInterval(() => service.all(), previousInterval * MINUTE_IN_MILLIS);
-    emit('scraper:enable');
-    return service.all();
-  }
-  return serviceHandler;
-}
-
 export function stop() {
   if (serviceHandler) {
     log.info('Stopping the scrapper service');
@@ -32,8 +21,25 @@ export function stop() {
   return serviceHandler;
 }
 
-export function toggle() {
-  return serviceHandler ? stop() : start();
+export function start(interval = previousInterval, scrapeNow = true) {
+  if (serviceHandler) {
+    log.verbose('Cancelling current interval');
+    stop();
+  }
+
+  previousInterval = interval;
+  log.info(`Scheduling scraper for every [${previousInterval}] minutes`);
+  serviceHandler = setInterval(() => service.all(), previousInterval * MINUTE_IN_MILLIS);
+  emit('scraper:enable');
+  if (scrapeNow) {
+    return service.all();
+  }
+
+  return serviceHandler;
+}
+
+export function toggle(interval = previousInterval) {
+  return serviceHandler ? stop() : start(interval);
 }
 
 export default {
