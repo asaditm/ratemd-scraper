@@ -18,7 +18,7 @@ let instance, doctor, review = {};
 
 function scrapeOnCreate(createdDoctor) {
   log.info(`Scraping newly created doctor [${createdDoctor.name}]`);
-  emit('doctors:create', createdDoctor);
+  emit('doctors:create', createdDoctor.get());
   scraper.single(createdDoctor)
     .then((result) => {
       if (!result) {
@@ -49,15 +49,9 @@ function init(config) {
   // Register model hooks
   doctor.afterCreate('create', scrapeOnCreate);
   doctor.afterDelete('delete', (document = {}) => emit('doctors:delete', document));
-  doctor.afterUpdate('update', (updated) => {
-    setTimeout(() =>
-      doctor.findById(updated.id, { include: [{ model: review }] })
-        .then(doc => emit('doctors:update', doc))
-    , 1000);
-  });
-
-  // TODO remove the delay, and have client listen for the scrape:finish event
-  // TODO and use lodash.merge to combine the doctor + review prop
+  doctor.afterUpdate('update', (updated) =>
+    updated.getReview().then((r) => emit('doctors:update', Object.assign(updated.get(), { review: r.get() })))
+  );
 
   if (config.database.force) {
     log.warning('Dropping tables before creating').warning('Disable in [user.config.json:force]');
