@@ -34,8 +34,7 @@ function controller($scope, $mdDialog, $mdConstant, doctorsService) {
     doctorsService.create(doctor).then((result) => {
       $scope.loading = false;
       $mdDialog.hide(result);
-    })
-    .catch((err) => {
+    }).catch((err) => {
       $scope.loading = false;
       $scope.error = err || 'Entered url is invalid';
       $scope.doctorForm.url.$setValidity('scraper', false);
