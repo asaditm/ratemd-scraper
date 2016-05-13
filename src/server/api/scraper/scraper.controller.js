@@ -20,6 +20,15 @@ class Controller {
     return doctor.scrape(req, res);
   }
 
+  scrapeAll(req, res) {
+    userConfig.read().then(config => {
+      scraper.start(config.scraper.interval, true);
+      return res.status(200).json({ message: 'Scraping all doctors' });
+    }).catch((err) =>
+      res.status(500).json(createHttpError('Error toggling scraper', err))
+    );
+  }
+
 }
 
 export default Controller;

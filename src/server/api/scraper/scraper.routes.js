@@ -7,6 +7,10 @@ export function register(router) {
     .get(ctrl.toggleService);
 
   router
+    .route('/scraper/all')
+    .get(ctrl.scrapeAll);
+
+  router
     .route('/scraper/:id')
     .get(ctrl.scrape);
 }
