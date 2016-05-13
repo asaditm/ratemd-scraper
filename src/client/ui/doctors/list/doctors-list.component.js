@@ -1,25 +1,33 @@
-/* eslint indent: 0 */
-const template = [
-  '<md-list class="doctors-list">',
-    '<md-subheader class="md-no-sticky">{{$ctrl.socket.doctors.length || 0}} doctors</md-subheader>',
-    '<md-list-item class="md-3-line" ng-repeat="doctor in $ctrl.socket.doctors">',
-      '<ng-md-icon icon="person" class="md-avatar-icon"></ng-md-icon>',
-      '<div class="md-list-item-text" layout="column">',
-        '<h3>{{doctor.name}}</h3> - ID: {{doctor.id}}',
-        '<h4>{{doctor.rating}}</h4>',
-        '<p ng-hide="!doctor.review">{{doctor.review.created}}</p>',
-      '</div>',
-      '<md-divider md-inset hide-sm ng-if="!$last"></md-divider>',
-      '<md-divider hide-gt-sm ng-if="!$last"></md-divider>',
-    '</md-list-item>',
-  '</md-list>'
-].join('');
+import templateUrl from './doctor-list.tpl.html';
 
-// TODO refactor out item to it's own directive
-// TODO add an error when doctos couldn't be loaded
+// TODO refactor out 'item' to it's own directive
+
+// TODO add animations for the ng-repeat and the search box
+
+function formatDoctor(doctor) {
+  return {
+    value: doctor.name.replace(' ', '').toLowerCase(),
+    display: doctor.name
+  };
+}
 
 /** @ngInject */
 function controller(doctorsSocket) {
+  this.search = { name: '' };
+
+  this.toggleSearch = () => {
+    this.searchVisible = !this.searchVisible;
+    this.search.name = '';
+  };
+
+  this.searchQuery = (query) => {
+    const doctors = Array.from(this.socket.doctors, x => formatDoctor(x));
+    if (query.length < 2) {
+      return doctors;
+    }
+    return doctors.filter(x => x.value.indexOf(query.toLowerCase()) >= 0);
+  };
+
   doctorsSocket.activate().then(() => {
     this.socket = doctorsSocket;
     console.log('DList Activated');
@@ -28,4 +36,4 @@ function controller(doctorsSocket) {
 
 const bindings = {};
 
-export default { name: 'doctorsList', bindings, template, controller };
+export default { name: 'doctorsList', bindings, templateUrl, controller };

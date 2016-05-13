@@ -1,0 +1,34 @@
+<md-list class="doctors-list">
+  <div layout="row" layout-align="space-between center">
+    <md-subheader class="md-no-sticky">
+      {{$ctrl.socket.doctors.length || 0}} doctors
+    </md-subheader>
+    <div layout="row" layout-align="end center">
+      <md-autocomplete ng-show="$ctrl.searchVisible"
+        md-selected-item="$ctrl.searchSelected"
+        md-search-text="$ctrl.search.name"
+        md-items="item in $ctrl.searchQuery($ctrl.search.name)"
+        md-item-text="item.display"
+        placeholder="By name">
+        <md-item-template>
+          <span md-highlight-text="$ctrl.search.name" md-highlight-flags="^i">{{item.display}}</span>
+        </md-item-template>
+        <md-not-found>No match "{{$ctrl.search.name}}".</md-not-found>
+      </md-autocomplete>
+      <icon-button icon="{{$ctrl.searchVisible ? 'keyboard_arrow_right' : 'search'}}"
+        action="$ctrl.toggleSearch()"
+        fill="black">
+      </icon-button>
+    </div>
+  </div>
+  <md-list-item class="md-3-line" ng-repeat="doctor in $ctrl.socket.doctors | filter:$ctrl.search">
+    <ng-md-icon icon="person" class="md-avatar-icon"></ng-md-icon>
+    <div class="md-list-item-text" layout="column">
+      <h3>{{doctor.name}}</h3> - ID: {{doctor.id}}
+      <h4>{{doctor.rating}}</h4>
+      <p ng-hide="!doctor.review">{{doctor.review.created}}</p>
+    </div>
+    <md-divider md-inset hide-sm ng-if="!$last"></md-divider>
+    <md-divider hide-gt-sm ng-if="!$last"></md-divider>
+  </md-list-item>
+</md-list>
