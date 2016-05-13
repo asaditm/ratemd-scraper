@@ -1,5 +1,5 @@
 /** @ngInject */
-export function setTheme($mdThemingProvider) {
+export function setTheme($mdThemingProvider, $mdIconProvider) {
   const blueMap = $mdThemingProvider.extendPalette('light-blue', {
     contrastDefaultColor: 'light',
     contrastDarkColors: ['50'],
@@ -19,6 +19,8 @@ export function setTheme($mdThemingProvider) {
   $mdThemingProvider
     .theme('input', 'default')
     .primaryPalette('grey');
+
+  $mdIconProvider.defaultFontSet('FontAwesome').fontSet('fa', 'FontAwesome');
 }
 
 export default setTheme;

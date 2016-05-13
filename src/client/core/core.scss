@@ -14,3 +14,8 @@ ng-md-icon {
     fill: white;
   }
 }
+
+// For FontAwesome icon buttons
+md-icon[md-font-icon] {
+  height: auto;
+}
