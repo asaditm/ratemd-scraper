@@ -15,20 +15,13 @@
         </md-item-template>
         <md-not-found>No match "{{$ctrl.search.name}}".</md-not-found>
       </md-autocomplete>
-      <icon-button icon="{{$ctrl.searchVisible ? 'keyboard_arrow_right' : 'search'}}"
-        action="$ctrl.toggleSearch()"
-        fill="black">
-      </icon-button>
+      <md-button class="md-fab md-mini md-hue-2" aria-label="Search doctor list" ng-click="$ctrl.toggleSearch()">
+        <ng-md-icon icon="{{$ctrl.searchIcon}}" style="fill: white" options="{{$ctrl.searchIconOptions}}"></ng-md-icon>
+      </md-button>
     </div>
   </div>
-  <md-list-item class="md-3-line" ng-repeat="doctor in $ctrl.socket.doctors | filter:$ctrl.search">
-    <ng-md-icon icon="person" class="md-avatar-icon"></ng-md-icon>
-    <div class="md-list-item-text" layout="column">
-      <h3>{{doctor.name}}</h3> - ID: {{doctor.id}}
-      <h4>{{doctor.rating}}</h4>
-      <p ng-hide="!doctor.review">{{doctor.review.created}}</p>
-    </div>
-    <md-divider md-inset hide-sm ng-if="!$last"></md-divider>
-    <md-divider hide-gt-sm ng-if="!$last"></md-divider>
-  </md-list-item>
+  <doctor-item ng-repeat="doctor in $ctrl.socket.doctors | filter:$ctrl.search"
+    doctor="doctor"
+    last="$last">
+  </doctor-item>
 </md-list>

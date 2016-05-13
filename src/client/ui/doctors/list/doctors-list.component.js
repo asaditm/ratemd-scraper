@@ -6,7 +6,7 @@ import templateUrl from './doctor-list.tpl.html';
 
 function formatDoctor(doctor) {
   return {
-    value: doctor.name.replace(' ', '').toLowerCase(),
+    value: doctor.name.toLowerCase(),
     display: doctor.name
   };
 }
@@ -14,10 +14,13 @@ function formatDoctor(doctor) {
 /** @ngInject */
 function controller(doctorsSocket) {
   this.search = { name: '' };
+  this.searchIcon = 'search';
+  this.searchIconOptions = { rotation: 'clock' };
 
   this.toggleSearch = () => {
     this.searchVisible = !this.searchVisible;
     this.search.name = '';
+    this.searchIcon = this.searchVisible ? 'keyboard_arrow_right' : 'search';
   };
 
   this.searchQuery = (query) => {
