@@ -20,7 +20,7 @@ function onConnect(socket) {
   log.info(`[${socket.id}] Connected`)
     .verbose(`There are [${socketsConnected}] sockets connected`);
 
-  socket.on('disconnect', onDisconnect);
+  socket.on('disconnect', () => onDisconnect(socket));
 }
 
 export function emit(event, data, callback = NOOP) {
