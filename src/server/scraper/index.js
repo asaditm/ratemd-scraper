@@ -16,7 +16,7 @@ export function stop() {
     log.info('Stopping the scrapper service');
     clearInterval(serviceHandler);
     serviceHandler = null;
-    emit('scraper:disable');
+    emit('scraper:disabled');
   }
   return serviceHandler;
 }
@@ -30,7 +30,7 @@ export function start(interval = previousInterval, scrapeNow = true) {
   previousInterval = interval;
   log.info(`Scheduling scraper for every [${previousInterval}] minutes`);
   serviceHandler = setInterval(() => service.all(), previousInterval * MINUTE_IN_MILLIS);
-  emit('scraper:enable');
+  emit('scraper:enabled');
   if (scrapeNow) {
     return service.all();
   }

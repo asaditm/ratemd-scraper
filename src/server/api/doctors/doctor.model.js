@@ -9,7 +9,7 @@ export const Doctor = {
   schema: {
     name: {
       type: Sequelize.STRING,
-      unique: false,
+      unique: true,
       allowNull: false,
       set: function (value) {
         this.setDataValue('name', value.trim());

@@ -18,12 +18,12 @@ class DoctorsApi {
   }
 
   create(doctor) {
-    // POST /doctors
     return privates.get(this).$http.post('/api/doctors', doctor)
       .then((response) => response.data)
       .catch((err) => {
+        const errMsg = err.data.errors ? 'Doctor already exists' : err.data.message;
         console.log('[DoctorsService] create() failed', err);
-        return privates.get(this).$q.reject(err.data.message);
+        return privates.get(this).$q.reject(errMsg);
       });
   }
 
