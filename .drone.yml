@@ -6,21 +6,14 @@ build:
   commands:
     - npm install --unsafe-perm
     - npm run lint
-    - npm test
+    # - npm test
 
 # Example deploy, check readme and github.com/jordond/docker-basesite for more info
-# deploy:
-#   ssh:
-#     host: myDomain.ca
-#     user: drone
-#     commands:
-#       - docker-restart awesomeApp-staging
-#     when:
-#       branch: develop
-#   ssh:
-#     host: myDomain.ca
-#     user: drone
-#     commands:
-#       - docker-restart awesomeApp
-#     when:
-#       branch: master
+deploy:
+  ssh:
+    host: hoogit.ca
+    user: drone
+    commands:
+      - docker-restart ratemd
+    when:
+      branch: master
