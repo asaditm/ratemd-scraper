@@ -1,23 +1,22 @@
-import { remove, merge } from 'lodash';
-
 const events = {
   scraper: ['enabled', 'disabled'],
   scrapeAll: ['start', 'finish', 'error'],
-  scrape: ['start', 'new', 'finish', 'failed']
+  scrape: ['start', 'finish', 'failed']
 };
+
+function extractAtion(event) {
+  return event.substr(event.lastIndexOf(':') + 1, event.length);
+}
 
 export class ScraperSocket {
   /** @ngInject */
-  constructor(socketService, doctorsSocket) {
+  constructor($rootScope, socketService, doctorsSocket) {
+    this.rootScope = $rootScope;
     this.socket = socketService;
+    this.activate();
   }
 
   activate() {
-    // TODO extra work?
-    this.register();
-  }
-
-  register() {
     for (const event of events.scraper) {
       this.socket.get().on(`scraper:${event}`, () => this.onScraper(event));
     }
@@ -44,23 +43,9 @@ export class ScraperSocket {
   }
 
   onScrape(event, data) {
-    // Start individual spinner based on ID
-    // see onScrapeAll
-    switch (event) {
-      case 'scrape:start'.equals(event):
-        break;
-      case 'scrape:new'.equals(event):
-        break;
-      case 'scrape:finish'.equals(event):
-        break;
-      case 'scrape:failed'.equals(event):
-        break;
-      default:
-        console.log(`[onScrape] unknown event: ${event}`, data);
-    }
-    console.log(`[onScrape] event: ${event}`, data);
+    data.hasNewReview = true;
+    this.rootScope.$broadcast(`socket:scrape:${data.id}`, data);
   }
-
 }
 
 export default ScraperSocket;

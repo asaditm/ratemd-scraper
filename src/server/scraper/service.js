@@ -14,7 +14,7 @@ export class ScraperService {
    */
   single(doctor) {
     log.verbose(`Starting scrape for [${doctor.name}]`);
-    emit('scrape:start', doctor.id);
+    emit('scrape:start', { id: doctor.id, scraping: true });
 
     const scraper = new Scraper();
     return scraper.fullScrape().fromDoctor(doctor).then((result) => {
@@ -45,9 +45,8 @@ export class ScraperService {
         return Promise.all([query]).then(() => {
           if (isNewer) {
             // TODO Email Admin + all users in doctor:emailList
-            emit('scrape:new', doctor.id);
           }
-          emit('scrape:finish', doctor.id);
+          emit('scrape:finish', { id: doctor.id, scraping: false, hasNewReview: isNewer });
           log.verbose(`Scrape finished for [${doctor.name}]`);
           return doctor.update(result.doctor);
         });
@@ -55,7 +54,7 @@ export class ScraperService {
     })
     .catch((err) => {
       log.error(`Failed to scrape doctor [${doctor.id}]`, err);
-      emit('scrape:failed', Object.assign(err, { doctor: { id: doctor.id } }));
+      emit('scrape:failed', Object.assign({ error: err }, { id: doctor.id }));
     });
   }
 

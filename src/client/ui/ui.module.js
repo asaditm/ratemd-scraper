@@ -6,6 +6,7 @@ import toolbarButtonComponent from './toolbar/button.component';
 import iconButtonComponent from './icon-button.component';
 
 import scraperSocketService from './scraper/scraper-socket.service';
+import scraperToggleComponent from './scraper/scraper-toggle.component';
 
 const dependencies = [
   coreModule,
@@ -17,6 +18,7 @@ const ui = angular
   .service('scraperSocket', scraperSocketService)
   .component(toolbarComponent.name, toolbarComponent)
   .component(toolbarButtonComponent.name, toolbarButtonComponent)
-  .component(iconButtonComponent.name, iconButtonComponent);
+  .component(iconButtonComponent.name, iconButtonComponent)
+  .component(scraperToggleComponent.name, scraperToggleComponent);
 
 export default ui.name;

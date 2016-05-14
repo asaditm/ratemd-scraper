@@ -1,6 +1,6 @@
 <md-list class="doctors-list">
   <div layout="row" layout-align="space-between center">
-    <md-subheader class="md-no-sticky">
+    <md-subheader class="md-no-sticky" hide-xs>
       {{$ctrl.socket.doctors.length || 0}} doctors
     </md-subheader>
     <div layout="row" layout-align="end center">
@@ -15,7 +15,7 @@
         </md-item-template>
         <md-not-found>No match "{{$ctrl.search.name}}".</md-not-found>
       </md-autocomplete>
-      <md-button class="md-fab md-mini md-hue-2" aria-label="Search doctor list" ng-click="$ctrl.toggleSearch()">
+      <md-button flex-order-xs="-1" class="md-fab md-mini md-hue-2" aria-label="Search doctor list" ng-click="$ctrl.toggleSearch()">
         <ng-md-icon icon="{{$ctrl.searchIcon}}" style="fill: white" options="{{$ctrl.searchIconOptions}}"></ng-md-icon>
       </md-button>
     </div>

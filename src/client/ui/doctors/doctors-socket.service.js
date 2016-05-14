@@ -1,5 +1,7 @@
 import { remove } from 'lodash';
 
+let activated = false;
+
 export class DoctorsSocket {
   /** @ngInject */
   constructor(socketService, doctorsService) {
@@ -9,10 +11,14 @@ export class DoctorsSocket {
   }
 
   activate() {
+    if (activated) {
+      return Promise.resolve();
+    }
     return this.Doctor.all().then(response => {
       console.log('Retrieved doctors list');
       this.doctors = response;
       this.register();
+      activated = true;
     })
     .catch(err => console.error('[DoctorsSocket] Failed to get all doctors'));
   }
