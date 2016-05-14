@@ -36,13 +36,17 @@ export class DoctorsSocket {
 
   onUpdate(doctor) {
     const index = this.doctors.findIndex(d => d.id === doctor.id);
-    this.doctors[index] = doctor;
+    Object.assign(this.doctors[index], doctor);
     console.log(`[DoctorsSocket][${doctor.name}] was updated`);
   }
 
   onDelete(doctor) {
     remove(this.doctors, { id: doctor.id });
     console.log(`[DoctorsSocket][${doctor.name}] was deleted`);
+  }
+
+  find(id) {
+    return this.doctors.find(doctor => doctor.id === id);
   }
 }
 

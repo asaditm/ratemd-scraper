@@ -37,6 +37,15 @@ class DoctorsApi {
 
   destroy(id) {
     // DELETE /doctors/:id
+    return privates.get(this).$http.delete(`/api/doctors/${id}`)
+      .then(response => {
+        // TODO handle error message / toast?
+        console.log(`Deleted ${id}`);
+        return response.data;
+      }).catch(err => {
+        console.log('[DoctorsService] delete() failed', err);
+        return privates.get(this).$q.reject(err);
+      });
   }
 
   scrape(id) {

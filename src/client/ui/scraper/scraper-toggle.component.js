@@ -2,7 +2,7 @@
 const template = [
   '<md-button class="md-icon-button" aria-label="Favorite" ng-click="$ctrl.scrape()">',
     '<md-icon ',
-      'ng-hide="{{$ctrl.error || $ctrl.hasNewReview}}" ',
+      'ng-hide="$ctrl.error || $ctrl.hasNewReview" ',
       'md-font-icon="fa fa-refresh" ',
       'ng-class="{\'fa-spin\': $ctrl.scraping}">',
     '</md-icon>',
@@ -20,8 +20,6 @@ const template = [
 const bindings = {
   id: '<'
 };
-
-// TODO FIX THE ICONS STATUS
 
 /** @ngInject */
 function controller($scope, doctorsService) {

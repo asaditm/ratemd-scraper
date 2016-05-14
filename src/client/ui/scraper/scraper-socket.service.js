@@ -43,7 +43,6 @@ export class ScraperSocket {
   }
 
   onScrape(event, data) {
-    data.hasNewReview = true;
     this.rootScope.$broadcast(`socket:scrape:${data.id}`, data);
   }
 }
