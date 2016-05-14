@@ -1,0 +1,35 @@
+<md-dialog aria-label="Viewing Doctor" flex-xs="99" flex-gt-xs="90" flex-gt-md="70">
+  <form>
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>{{locals.doctor.name}}</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="cancel()">
+          <md-icon md-font-icon="fa fa-times" aria-label="Close dialog"></md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+     <md-dialog-content >
+      <md-tabs md-dynamic-height md-border-bottom>
+        <md-tab label="info">
+          <md-content class="md-padding">
+            <h1 class="md-display-2">Info</h1>
+          </md-content>
+        </md-tab>
+        <md-tab label="review">
+          <md-content class="md-padding">
+            <h1 class="md-display-2">Latest Review</h1>
+          </md-content>
+        </md-tab>
+        <md-tab label="settings">
+          <md-content class="md-padding">
+            <h1 class="md-display-2">Settings</h1>
+          </md-content>
+        </md-tab>
+      </md-tabs>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+      <md-button ng-click="hide()">Ok</md-button>
+    </md-dialog-actions>
+  </form>
+</md-dialog>
