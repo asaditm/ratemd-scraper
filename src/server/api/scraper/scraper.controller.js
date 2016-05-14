@@ -21,6 +21,7 @@ class Controller {
   }
 
   scrapeAll(req, res) {
+    // TODO refactor this as user config is no longer needed
     userConfig.read().then(config => {
       scraper.all();
       return res.status(200).json({ message: 'Scraping all doctors' });

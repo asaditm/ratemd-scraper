@@ -70,20 +70,20 @@ export class ScraperService {
         }
 
         log.info(`Scraping [${doctors.length}] doctors.`);
-        emit('scrape:all:start');
+        emit('scrape:all:start', { scraping: true });
         const scrapePromises = [];
         for (const doctor of doctors) {
           scrapePromises.push(this.single(doctor));
         }
 
         return Promise.all(scrapePromises).then(() => {
-          emit('scrape:all:finish');
+          emit('scrape:all:finish', { scraping: false });
           log.info('Scraping for all doctors finished');
         });
       })
       .catch((err) => {
         log.error('Error finding all doctors');
-        emit('scrape:all:error', err);
+        emit('scrape:all:failed', Object.assign({ err }, { scraping: false }));
         throw err;
       });
   }

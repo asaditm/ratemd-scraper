@@ -1,8 +1,11 @@
 <md-list class="doctors-list">
   <div layout="row" layout-align="space-between center">
-    <md-subheader class="md-no-sticky" hide-xs>
-      {{$ctrl.socket.doctors.length || 0}} doctors
-    </md-subheader>
+    <div layout="row">
+      <md-subheader class="md-no-sticky" hide-xs>
+        {{$ctrl.socket.doctors.length || 0}} doctors
+      </md-subheader>
+      <scrape-all></scrape-all>
+    </div>
     <div layout="row" layout-align="end center">
       <md-autocomplete ng-show="$ctrl.searchVisible"
         md-selected-item="$ctrl.searchSelected"

@@ -40,11 +40,14 @@ export class ScraperSocket {
 
     // On error display toast with error message
     console.log(`'ScrapeAll: ${event}: `, data);
+    this.rootScope.$broadcast('socket:scrape:all', data);
+    // TODO refactor this ^
   }
 
   onScrape(event, data) {
     this.rootScope.$broadcast(`socket:scrape:${data.id}`, data);
   }
+
 }
 
 export default ScraperSocket;

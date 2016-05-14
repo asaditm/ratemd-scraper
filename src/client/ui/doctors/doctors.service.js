@@ -57,6 +57,15 @@ class DoctorsApi {
         return privates.get(this).$q.reject(err);
       });
   }
+
+  scrapeAll() {
+    return privates.get(this).$http.get('/api/scraper/all')
+      .then(response => response.data)
+      .catch(err => {
+        console.log('[DoctorsService] scrapeAll() failed', err);
+        return privates.get(this).$q.reject(err);
+      });
+  }
 }
 
 export default DoctorsApi;
