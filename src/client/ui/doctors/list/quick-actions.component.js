@@ -31,7 +31,8 @@ function controller($scope, $mdDialog, scraperSocket, doctorsService, doctorsSoc
       .title('Would you like to delete this doctor?')
       .textContent(`Are you sure you wish to no longer monitor ${doctor.name}?\nThis is cannot be undone.`)
       .targetEvent(targetEvent)
-      .ok('Yes').cancel('No');
+      .ok('Yes')
+      .cancel('No');
 
     $mdDialog.show(confirm).then(() => doctorsService.destroy(this.id));
   }
