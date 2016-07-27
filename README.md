@@ -48,6 +48,11 @@ Scrapes doctor data from `www.ratemds.com`.
 1. Then run `npm run dev` *or* `npm run dev-prod` for testing production mode.
 1. Edit away, webpack will detect changes and rebuild, and then BrowserSync will reload.
 
+### Dev Docker
+```
+docker run -d --restart=always --name="ratemd" -p 30000:8080 -e repo=jordond/ratemd-scraper -e branch=develop jordond/basesite
+```
+
 ## Tests
 
 Testing framework is now included. In `./test/setup.js` is the setup environment for the tests to be run.  Use `npm test` for a one time execution of all test files.  For developing with testing run the command `npm run dev-test`, this will start the development environment and run the tests in watch mode.
